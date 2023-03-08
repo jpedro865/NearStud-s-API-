@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import UserRouter from './routes/users.route';
 
 require('dotenv').config();
 
@@ -22,7 +23,7 @@ app.use(express.json());
 
 
 // routes here
-
+app.use('/users', UserRouter);
 
 
 app.listen(port, () => {

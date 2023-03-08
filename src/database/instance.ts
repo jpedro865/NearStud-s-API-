@@ -32,6 +32,10 @@ async function connectdb() {
   //   });
 }
 
-connectdb();
+if (process.argv[2] === 'dbcheck') {
+  connectdb();
+}
 
-export default client.db(process.env.DB_NAME);
+const db = client.db(process.env.DB_NAME)
+
+export { db, client };
