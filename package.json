@@ -10,11 +10,16 @@
     "mongodb": "^5.1.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.3",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^4.4.1"
   },
   "scripts": {
-    "build": "rm -r build ; tsc",
-    "dev": "nodemon",
+    "start": "nodemon src/index.ts",
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src/",
     "dbcheck": "ts-node src/database/instance.ts dbcheck"
   },
@@ -22,5 +27,10 @@
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.14"
-  }
+  },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ]
 }
