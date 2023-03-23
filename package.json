@@ -7,6 +7,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
+    "mongodb": "^5.1.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.3"
@@ -15,9 +16,7 @@
     "build": "rm -r build ; tsc",
     "dev": "nodemon",
     "eslint": "eslint src/",
-    "dbcheck": "ts-node src/database/migrate.ts dbcheck",
-    "migrate": "ts-node src/database/migrate.ts",
-    "fmigrate": "ts-node src/database/migrate.ts -f"
+    "dbcheck": "ts-node src/database/instance.ts dbcheck"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
