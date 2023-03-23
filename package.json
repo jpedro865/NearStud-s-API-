@@ -13,13 +13,13 @@
     "typescript": "^4.9.3"
   },
   "scripts": {
+    "start": "nodemon src/index.ts",
     "build": "rimraf dist && tsc",
-    "start": "nodemon",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src/",
-    "dbcheck": "ts-node src/database/instance.ts dbcheck",
-    "test" : "echo \"Error: no test specified\" && exit 1"
+    "dbcheck": "ts-node src/database/instance.ts dbcheck"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",

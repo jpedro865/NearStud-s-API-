@@ -22,6 +22,12 @@ app.use((0, cors_1.default)({
 app.use(express_1.default.json());
 // routes here
 app.use('/users', users_route_1.default);
+app.get('/', (req, res) => {
+    res.status(200).json({
+        "this": "NearStud's APi",
+        "Welcome": true
+    });
+});
 app.listen(port, () => {
     console.log(`Your API is now listening on port ${port}`);
 });
