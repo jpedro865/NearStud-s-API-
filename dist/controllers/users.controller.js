@@ -9,9 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getById = exports.getAll = void 0;
+exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
+const users_validator_1 = require("../validator/users.validator");
 const instance_1 = require("../database/instance");
+/**
+ * Controller pour rechercher tous les utilisateurs
+ *
+ * @param req
+ * @param res
+ */
 function getAll(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         yield instance_1.client.connect();
@@ -30,6 +37,12 @@ function getAll(req, res) {
     });
 }
 exports.getAll = getAll;
+/**
+ * Controller pour rechercher un utilisateur par son Identifiant
+ *
+ * @param req
+ * @param res
+ */
 function getById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (mongodb_1.ObjectId.isValid(req.params.id)) {
@@ -54,4 +67,22 @@ function getById(req, res) {
     });
 }
 exports.getById = getById;
+/**
+ * Controller de creation d'un nouveau utilisateur
+ *
+ * @param req
+ * @param res
+ */
+function createUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield instance_1.client.connect();
+        const validator = new users_validator_1.UserValidator();
+        validator.validateUserCreation(req);
+        if (validator.isValid()) {
+            yield instance_1.db.collection('users')
+                .insertOne(req.body);
+        }
+    });
+}
+exports.createUser = createUser;
 //# sourceMappingURL=users.controller.js.map

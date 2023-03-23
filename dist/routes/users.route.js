@@ -5,5 +5,6 @@ const users_controller_1 = require("../controllers/users.controller");
 const UserRouter = (0, express_1.Router)();
 UserRouter.get('/', users_controller_1.getAll);
 UserRouter.get('/:id', users_controller_1.getById);
+UserRouter.post('/', users_controller_1.createUser);
 exports.default = UserRouter;
 //# sourceMappingURL=users.route.js.map
