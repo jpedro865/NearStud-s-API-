@@ -1,9 +1,9 @@
 export interface User {
-  firstname: String,
-  lastname: String,
-  username: String,
-  email: String,
-  admin: Number,
+  firstname: string,
+  lastname: string,
+  username: string,
+  email: string,
+  admin: number,
   date_creation: Date,
   last_updated: Date,
 }
