@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { UserValidator } from '../validator/users.validator';
-import { db, client} from '../database/instance';
+import { db } from '../database/instance';
 
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -10,7 +10,6 @@ import { db, client} from '../database/instance';
  * @param res 
  */
 export async function getAll(req: Request, res: Response) {
-  await client.connect();
   await db.collection('users')
     .find()
     .toArray()
@@ -22,7 +21,6 @@ export async function getAll(req: Request, res: Response) {
         "Server_Error" : err
       })
     });
-  await client.close();
 }
 
 /**
@@ -33,7 +31,6 @@ export async function getAll(req: Request, res: Response) {
  */
 export async function getById(req: Request, res: Response) {
   if (ObjectId.isValid(req.params.id)) {
-    await client.connect();
     await db.collection('users')
       .findOne({_id : new ObjectId(req.params.id)})
       .then((data) => {
@@ -44,7 +41,6 @@ export async function getById(req: Request, res: Response) {
           "Server_Error" : err
         });
       });
-    await client.close();
   } else {
     res.status(500).json({
       'error': 'Not a valid ObjectId document'
@@ -59,11 +55,23 @@ export async function getById(req: Request, res: Response) {
  * @param res 
  */
 export async function createUser(req: Request, res: Response) {
-  await client.connect();
+  
   const validator: UserValidator = new UserValidator();
-  validator.validateUserCreation(req);
+  await validator.validateUserCreation(req);
+  
+  // inserting the user in the db if the data was validated
   if (validator.isValid()) {
     await db.collection('users')
-    .insertOne(req.body);
+    .insertOne(req.body)
+    .then( data => {
+      res.status(201).json(data);
+    })
+    .catch( error => {
+      res.status(500).json(error);
+    });
+  } else {
+    res.status(400).json({
+      'error_list': validator.getErrors()
+    });
   }
 }
