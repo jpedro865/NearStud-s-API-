@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { db, client} from '../database/instance';
+import { db } from '../database/instance';
 import { User } from '../interfaces/users.interfaces';
 import { Validator } from './validator';
 
@@ -12,9 +12,19 @@ export class UserValidator extends Validator {
    * 
    * @param req 
    */
-  public validateUserCreation(req: Request) {
+  public async validateUserCreation(req: Request) {
     const user: User = req.body;
-    this.checkUserNameExists(user.username);
+
+    this.isEmpty(user.email);
+    this.isEmpty(user.firstname);
+    this.isEmpty(user.lastname);
+    this.isEmpty(user.username);
+    this.isMail(user.email);
+
+    if(this.isValid()) {
+      await this.checkUserNameExists(user.username);
+      await this.checkEmailExists(user.email);
+    }
   }
 
   /**
@@ -23,16 +33,23 @@ export class UserValidator extends Validator {
    * 
    * @param username
    */
-  private async checkUserNameExists(username: String) {
-    await client.connect();
-    await db.collection('users')
-      .findOne({username})
-        .then( data => {
-          if (data == null) {
-            this.setError()
-          }
-        })
-    await client.close()
+  private async checkUserNameExists(username: string) {
+    const result = await db.collection('users').findOne({username});
+    if (result != null) {
+      this.setError('This username already exists');
+    }
+  }
+
+  /**
+   * Verifie if the user email being created already exists in db
+   * 
+   * @param email 
+   */
+  private async checkEmailExists(email: string) {
+    const result = await db.collection('users').findOne({email});
+    if (result != null){
+      this.setError('This E-mail already exists')
+    }
   }
 }
 

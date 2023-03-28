@@ -21,8 +21,18 @@ class UserValidator extends validator_1.Validator {
      * @param req
      */
     validateUserCreation(req) {
-        const user = req.body;
-        this.checkUserNameExists(user.username);
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = req.body;
+            this.isEmpty(user.email);
+            this.isEmpty(user.firstname);
+            this.isEmpty(user.lastname);
+            this.isEmpty(user.username);
+            this.isMail(user.email);
+            if (this.isValid()) {
+                yield this.checkUserNameExists(user.username);
+                yield this.checkEmailExists(user.email);
+            }
+        });
     }
     /**
      * Verifies if the User username we want to create
@@ -32,15 +42,23 @@ class UserValidator extends validator_1.Validator {
      */
     checkUserNameExists(username) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield instance_1.client.connect();
-            yield instance_1.db.collection('users')
-                .findOne({ username })
-                .then(data => {
-                if (data == null) {
-                    this.setError();
-                }
-            });
-            yield instance_1.client.close();
+            const result = yield instance_1.db.collection('users').findOne({ username });
+            if (result != null) {
+                this.setError('This username already exists');
+            }
+        });
+    }
+    /**
+     * Verifie if the user email being created already exists in db
+     *
+     * @param email
+     */
+    checkEmailExists(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield instance_1.db.collection('users').findOne({ email });
+            if (result != null) {
+                this.setError('This E-mail already exists');
+            }
         });
     }
 }

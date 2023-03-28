@@ -21,7 +21,6 @@ const instance_1 = require("../database/instance");
  */
 function getAll(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield instance_1.client.connect();
         yield instance_1.db.collection('users')
             .find()
             .toArray()
@@ -33,7 +32,6 @@ function getAll(req, res) {
                 "Server_Error": err
             });
         });
-        yield instance_1.client.close();
     });
 }
 exports.getAll = getAll;
@@ -46,7 +44,6 @@ exports.getAll = getAll;
 function getById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (mongodb_1.ObjectId.isValid(req.params.id)) {
-            yield instance_1.client.connect();
             yield instance_1.db.collection('users')
                 .findOne({ _id: new mongodb_1.ObjectId(req.params.id) })
                 .then((data) => {
@@ -57,7 +54,6 @@ function getById(req, res) {
                     "Server_Error": err
                 });
             });
-            yield instance_1.client.close();
         }
         else {
             res.status(500).json({
@@ -75,12 +71,23 @@ exports.getById = getById;
  */
 function createUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield instance_1.client.connect();
         const validator = new users_validator_1.UserValidator();
-        validator.validateUserCreation(req);
+        yield validator.validateUserCreation(req);
+        // inserting the user in the db if the data was validated
         if (validator.isValid()) {
             yield instance_1.db.collection('users')
-                .insertOne(req.body);
+                .insertOne(req.body)
+                .then(data => {
+                res.status(201).json(data);
+            })
+                .catch(error => {
+                res.status(500).json(error);
+            });
+        }
+        else {
+            res.status(400).json({
+                'error_list': validator.getErrors()
+            });
         }
     });
 }

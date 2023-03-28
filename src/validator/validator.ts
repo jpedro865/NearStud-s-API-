@@ -1,13 +1,11 @@
-import { Request } from "express";
-
+/**
+ * Validator class
+ * 
+ */
 export class Validator {
 
-  public req: Request;
   private isvalid = true;
-
-  Validator(req: Request){
-    this.req = req;
-  }
+  private errors: Array<string> = new Array;
 
   /**
    * Verifies if a value is empty
@@ -16,9 +14,14 @@ export class Validator {
    */
   public isEmpty(value: any) {
     if ( value == null || value == undefined) {
-      this.isvalid = true;
-    } else {
-      this.isvalid = false;
+      this.setError('This case is empty');
+    }
+  }
+
+  public isMail(value: string) {
+    const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    if (!expression.test(value)){
+      this.setError('Email not valid');
     }
   }
 
@@ -26,8 +29,13 @@ export class Validator {
     return this.isvalid;
   }
 
-  public setError() {
-    this.isvalid == false;
+  public setError(message: string) {
+    this.errors.push(message);
+    this.isvalid = false;
+  }
+
+  public getErrors() {
+    return this.errors;
   }
 
 }
