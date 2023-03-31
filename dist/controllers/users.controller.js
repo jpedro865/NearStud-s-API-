@@ -75,9 +75,9 @@ exports.getById = getById;
  */
 function createUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        req.body.pwd = crypt_pwd(req.body.pwd);
         const validator = new users_validator_1.UserValidator();
         yield validator.validateUserCreation(req);
+        req.body.pwd = yield crypt_pwd(req.body.pwd);
         // inserting the user in the db if the data was validated
         if (validator.isValid()) {
             yield instance_1.db.collection('users')
@@ -98,12 +98,14 @@ function createUser(req, res) {
 }
 exports.createUser = createUser;
 function crypt_pwd(pwd) {
-    bcrypt_1.default.hash(pwd, 25, function (err, hash) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const hash = yield bcrypt_1.default.hash(pwd, 8);
         return hash;
     });
 }
 function compare_hash(pwd, hash) {
-    bcrypt_1.default.compare(pwd, hash, function (err, result) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield bcrypt_1.default.compare(pwd, hash);
         return result;
     });
 }

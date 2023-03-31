@@ -58,12 +58,11 @@ export async function getById(req: Request, res: Response) {
  * @param res 
  */
 export async function createUser(req: Request, res: Response) {
-
-  req.body.pwd = crypt_pwd(req.body.pwd);
   
   const validator: UserValidator = new UserValidator();
   await validator.validateUserCreation(req);
-  
+
+  req.body.pwd = await crypt_pwd(req.body.pwd);
   // inserting the user in the db if the data was validated
   if (validator.isValid()) {
     await db.collection('users')
@@ -81,14 +80,12 @@ export async function createUser(req: Request, res: Response) {
   }
 }
 
-function crypt_pwd(pwd: string) {
-  bcrypt.hash(pwd, 25, function(err, hash) {
-    return hash;
-  });
+async function crypt_pwd(pwd: string) {
+  const hash = await bcrypt.hash(pwd, 8);
+  return hash
 }
 
-function compare_hash(pwd: string, hash: string) {
-  bcrypt.compare(pwd, hash, function(err, result) {
-    return result;
-  });
+async function compare_hash(pwd: string, hash: string) {
+  const result = await bcrypt.compare(pwd, hash);
+  return result
 }
