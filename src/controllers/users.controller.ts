@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import bcrypt from 'bcrypt';
 import { UserValidator } from '../validator/users.validator';
 import { db } from '../database/instance';
+
+
 
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -55,6 +58,8 @@ export async function getById(req: Request, res: Response) {
  * @param res 
  */
 export async function createUser(req: Request, res: Response) {
+
+  req.body.pwd = crypt_pwd(req.body.pwd);
   
   const validator: UserValidator = new UserValidator();
   await validator.validateUserCreation(req);
@@ -74,4 +79,16 @@ export async function createUser(req: Request, res: Response) {
       'error_list': validator.getErrors()
     });
   }
+}
+
+function crypt_pwd(pwd: string) {
+  bcrypt.hash(pwd, 25, function(err, hash) {
+    return hash;
+  });
+}
+
+function compare_hash(pwd: string, hash: string) {
+  bcrypt.compare(pwd, hash, function(err, result) {
+    return result;
+  });
 }

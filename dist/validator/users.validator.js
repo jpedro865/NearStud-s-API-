@@ -27,6 +27,7 @@ class UserValidator extends validator_1.Validator {
             this.isEmpty(user.firstname);
             this.isEmpty(user.lastname);
             this.isEmpty(user.username);
+            this.isEmpty(user.pwd);
             this.isMail(user.email);
             if (this.isValid()) {
                 yield this.checkUserNameExists(user.username);

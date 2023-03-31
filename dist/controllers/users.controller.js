@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
 const instance_1 = require("../database/instance");
 /**
@@ -71,6 +75,7 @@ exports.getById = getById;
  */
 function createUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        req.body.pwd = crypt_pwd(req.body.pwd);
         const validator = new users_validator_1.UserValidator();
         yield validator.validateUserCreation(req);
         // inserting the user in the db if the data was validated
@@ -92,4 +97,14 @@ function createUser(req, res) {
     });
 }
 exports.createUser = createUser;
+function crypt_pwd(pwd) {
+    bcrypt_1.default.hash(pwd, 25, function (err, hash) {
+        return hash;
+    });
+}
+function compare_hash(pwd, hash) {
+    bcrypt_1.default.compare(pwd, hash, function (err, result) {
+        return result;
+    });
+}
 //# sourceMappingURL=users.controller.js.map
