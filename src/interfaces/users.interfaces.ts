@@ -5,6 +5,7 @@ export interface User {
   email: string,
   pwd: string,
   admin: number,
+  verified: boolean,
   date_creation: Date,
   last_updated: Date,
 }
