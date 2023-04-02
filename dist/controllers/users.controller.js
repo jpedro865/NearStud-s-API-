@@ -82,9 +82,18 @@ function createUser(req, res) {
         if (validator.isValid()) {
             yield instance_1.db.collection('users')
                 .insertOne(req.body)
-                .then(data => {
+                .then((data) => __awaiter(this, void 0, void 0, function* () {
+                const user_id = data.insertedId.toString();
                 res.status(201).json(data);
-            })
+                const send = false;
+                // const send = await email_verif_send(user_id);
+                if (send) {
+                    console.log('email sent');
+                }
+                else {
+                    console.log('email not sent');
+                }
+            }))
                 .catch(error => {
                 res.status(500).json(error);
             });
@@ -97,12 +106,25 @@ function createUser(req, res) {
     });
 }
 exports.createUser = createUser;
+/**
+ * Cryptage du mot-de-passe
+ *
+ * @param pwd
+ * @returns string
+ */
 function crypt_pwd(pwd) {
     return __awaiter(this, void 0, void 0, function* () {
         const hash = yield bcrypt_1.default.hash(pwd, 8);
         return hash;
     });
 }
+/**
+ * Compare hashed mdp et mdp string
+ *
+ * @param pwd
+ * @param hash
+ * @returns boolean
+ */
 function compare_hash(pwd, hash) {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield bcrypt_1.default.compare(pwd, hash);
