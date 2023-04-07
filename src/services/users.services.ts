@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
 import { db } from "../database/instance";
-import { User } from "../interfaces/users.interfaces";
 
 export async function getUserById(user_id: string){
   if (ObjectId.isValid(user_id)) {

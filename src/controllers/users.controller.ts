@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { UserValidator } from '../validator/users.validator';
 import { db } from '../database/instance';
 import { email_verif_send } from '../services/emailer.services';
-import { log } from 'console';
+import jsonwebtoken from 'jsonwebtoken';
 
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -86,6 +86,84 @@ export async function createUser(req: Request, res: Response) {
       'error_list': validator.getErrors()
     });
   }
+}
+
+/**
+ * Controller pour connecter un User
+ * 
+ * @param req 
+ * @param res 
+ */
+export async function connect_user(req: Request, res: Response) {
+  const email = req.body.email;
+  const username = req.body.username;
+
+  if (username) {
+    db.collection('users').findOne({username : username})
+      .then( async (data) => {
+        const result = await compare_hash(req.body.pwd, data.pwd);
+        if (result) {
+          const token = jsonwebtoken.sign({
+            "_id": data._id,
+          }, process.env.SECRET_KEY, {
+            expiresIn: "24h",
+          });
+          res
+          .cookie('access_token', token, {
+            httpOnly: true,
+            maxAge: 1000 * 3600 * 24,
+          })
+          .status(200).json({
+            "Message": "Logged in successfully",
+          });
+        } else {
+          res.status(403).json({
+              "error": "Wrong password",
+            });
+        }
+      })
+      .catch(error => {
+        res.status(403).json({
+          "error": "This username doesn't exist"
+        });
+      });
+  } else {
+    db.collection('users').findOne({email : email})
+      .then( async (data) => {
+        const result = await compare_hash(req.body.pwd, data.pwd);
+        if (result) {
+          const token = jsonwebtoken.sign({
+            "_id": data._id,
+          }, process.env.SECRET_KEY, {
+            expiresIn: "24h",
+          });
+        } else {
+          res.status(403).json({
+            "error": "Wrong password",
+          });
+        }
+      })
+      .catch(err => {
+        res.status(403).json({
+          "error": "This email doesn't exist"
+        });
+      });
+  }
+}
+
+/**
+ * logout
+ * 
+ * @param req 
+ * @param res 
+ */
+export function logout(req: Request, res: Response) {
+  res
+    .clearCookie('access_token')
+    .status(200)
+    .json({
+      "message": "Logged out successfully",
+    });
 }
 
 /**

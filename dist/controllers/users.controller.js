@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = exports.getById = exports.getAll = void 0;
+exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
 const instance_1 = require("../database/instance");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 /**
  * Controller pour rechercher tous les utilisateurs
  *
@@ -106,6 +107,88 @@ function createUser(req, res) {
     });
 }
 exports.createUser = createUser;
+/**
+ * Controller pour connecter un User
+ *
+ * @param req
+ * @param res
+ */
+function connect_user(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const email = req.body.email;
+        const username = req.body.username;
+        if (username) {
+            instance_1.db.collection('users').findOne({ username: username })
+                .then((data) => __awaiter(this, void 0, void 0, function* () {
+                const result = yield compare_hash(req.body.pwd, data.pwd);
+                if (result) {
+                    const token = jsonwebtoken_1.default.sign({
+                        "_id": data._id,
+                    }, process.env.SECRET_KEY, {
+                        expiresIn: "24h",
+                    });
+                    res
+                        .cookie('access_token', token, {
+                        httpOnly: true,
+                        maxAge: 1000 * 3600 * 24,
+                    })
+                        .status(200).json({
+                        "Message": "Logged in successfully",
+                    });
+                }
+                else {
+                    res.status(403).json({
+                        "error": "Wrong password",
+                    });
+                }
+            }))
+                .catch(error => {
+                res.status(403).json({
+                    "error": "This username doesn't exist"
+                });
+            });
+        }
+        else {
+            instance_1.db.collection('users').findOne({ email: email })
+                .then((data) => __awaiter(this, void 0, void 0, function* () {
+                const result = yield compare_hash(req.body.pwd, data.pwd);
+                if (result) {
+                    const token = jsonwebtoken_1.default.sign({
+                        "_id": data._id,
+                    }, process.env.SECRET_KEY, {
+                        expiresIn: "24h",
+                    });
+                }
+                else {
+                    res.status(403).json({
+                        "error": "Wrong password",
+                    });
+                }
+            }))
+                .catch(err => {
+                res.status(403).json({
+                    "error": "This email doesn't exist"
+                });
+            });
+        }
+    });
+}
+exports.connect_user = connect_user;
+/**
+ * logout
+ *
+ * @param req
+ * @param res
+ */
+function logout(req, res) {
+    res
+        .clearCookie('access_token')
+        .status(200)
+        .json({
+        "message": "Logged out successfully",
+    });
+}
+exports.logout = logout;
 /**
  * Cryptage du mot-de-passe
  *
