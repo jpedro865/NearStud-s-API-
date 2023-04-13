@@ -9,34 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = void 0;
+exports.verifyUser = exports.getUserById = void 0;
 const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 function getUserById(user_id) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (mongodb_1.ObjectId.isValid(user_id)) {
-            yield instance_1.db.collection('users')
-                .findOne({ _id: new mongodb_1.ObjectId(user_id) })
-                .then((data) => {
-                return {
-                    'user': data,
-                    'error': false
-                };
-            })
-                .catch((err) => {
-                return {
-                    'user': false,
-                    "error": true
-                };
-            });
-        }
-        else {
-            return {
-                'user': false,
-                'error': true
-            };
-        }
+        const user = yield instance_1.db.collection('user').findOne({ _id: new mongodb_1.ObjectId(user_id) });
+        return user;
     });
 }
 exports.getUserById = getUserById;
+function verifyUser(user_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const update = yield instance_1.db.collection('users').updateOne({ _id: new mongodb_1.ObjectId(user_id) }, { $set: { verified: true } });
+        return update;
+    });
+}
+exports.verifyUser = verifyUser;
 //# sourceMappingURL=users.services.js.map

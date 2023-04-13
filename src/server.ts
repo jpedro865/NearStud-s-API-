@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: `http://localhost:${process.env.CLIENT_PORT}`,
   credentials: true,
-}))
+}));
 
 // teeling express to use json
 app.use(express.json());
@@ -30,8 +30,8 @@ app.get('/', ( req: Request, res: Response) => {
     "this": "NearStud's APi",
     "Welcome": true
   })
-})
+});
 
 app.listen(port, () => {
-      console.log(`Your API is now listening on port ${port}`);
-    });
+  console.log(`Your API is now listening on port ${port}`);
+});

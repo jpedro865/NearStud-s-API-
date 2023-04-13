@@ -1,35 +1,46 @@
 import nodemailer from 'nodemailer';
-import { getUserById } from './users.services';
-import { addVerifToken } from './tokens.service';
+import { addVerifToken, getTokenFromId } from './tokens.service';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { compile } from 'handlebars';
 
 require('dotenv').config();
 
-export async function email_verif_send(user_id: string) {
+export async function email_verif_send(user_id: string, user_email: string) {
   const transporteur = nodemailer.createTransport({
-    host: process.env.E_HOST,
-    service: "",
-    secure: false,
+    service: 'gmail',
     auth: {
-      user: process.env.MAIL,
+      user: process.env.EMAIL,
       pass: process.env.E_PASS,
     }
   });
 
-  const user: any = (await getUserById(user_id)).user;
+  const tokenAdd = await addVerifToken(user_id);
+  
+  if (tokenAdd){
+    const token = await getTokenFromId(tokenAdd.insertedId.toString());
+    const html = readFileSync(join(__dirname, '../emails/verif_email.html'), 'utf-8');
+    const template = compile(html);
+    const variables = {
+      link: process.env.BASE_URL.concat(`/users/verif-email/${token}`.toString())
+    }
+    const compiledHtml = template(variables);
 
-  if(user) {
-    await addVerifToken(user_id);
-    await transporteur.sendMail({
+    const emailOptions = {
       from: process.env.EMAIL,
-      to: user.email,
+      to: user_email,
       subject: "Verification compte NearStud's",
-      html: '../emails/verif_email.html'
-    }).then(() => {
-      return true;
-    }).catch(() => {
-      return false;
+      html: compiledHtml
+    }
+    await transporteur.sendMail(emailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return false;
+      } else {
+        return true;
+      }
     })
+  }else {
+    return false
   }
-
-  return false;
 }

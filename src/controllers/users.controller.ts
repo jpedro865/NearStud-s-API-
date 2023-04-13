@@ -58,7 +58,6 @@ export async function getById(req: Request, res: Response) {
  * @param res 
  */
 export async function createUser(req: Request, res: Response) {
-  
   const validator: UserValidator = new UserValidator();
   await validator.validateUserCreation(req);
 
@@ -69,16 +68,11 @@ export async function createUser(req: Request, res: Response) {
     .insertOne(req.body)
     .then( async (data) => {
       const user_id = data.insertedId.toString();
+      const send = await email_verif_send(user_id, req.body.email);
       res.status(201).json(data);
-      const send = false
-      // const send = await email_verif_send(user_id);
-      if(send) {
-        console.log('email sent');
-      } else {
-        console.log('email not sent');
-      }
     })
     .catch( error => {
+      console.log(error);
       res.status(500).json(error);
     });
   } else {
@@ -95,59 +89,39 @@ export async function createUser(req: Request, res: Response) {
  * @param res 
  */
 export async function connect_user(req: Request, res: Response) {
-  const email = req.body.email;
-  const username = req.body.username;
+  const identifier = req.body.identifier;
 
-  if (username) {
-    db.collection('users').findOne({username : username})
-      .then( async (data) => {
-        const result = await compare_hash(req.body.pwd, data.pwd);
-        if (result) {
-          const token = jsonwebtoken.sign({
-            "_id": data._id,
-          }, process.env.SECRET_KEY, {
-            expiresIn: "24h",
-          });
-          res
-          .cookie('access_token', token, {
-            httpOnly: true,
-            maxAge: 1000 * 3600 * 24,
-          })
-          .status(200).json({
-            "Message": "Logged in successfully",
-          });
-        } else {
-          res.status(403).json({
-              "error": "Wrong password",
-            });
-        }
-      })
-      .catch(error => {
-        res.status(403).json({
-          "error": "This username doesn't exist"
-        });
+  // verification si identifier existe
+  const username = await db.collection('users').findOne({username: identifier})
+  const email = await db.collection('users').findOne({email: identifier})
+  let user;
+  username ? user = username : user = email;
+  
+  if (user) {
+    const result = await compare_hash(req.body.pwd, user.pwd);
+    if (result) {
+      const token = jsonwebtoken.sign({
+        "_id": user._id,
+      }, process.env.SECRET_KEY, {
+        expiresIn: "24h",
       });
+      res
+      .cookie('access_token', token, {
+        httpOnly: true,
+        maxAge: 1000 * 3600 * 24,
+      })
+      .status(200).json({
+        "Message": "Logged in successfully",
+      });
+    } else {
+      res.status(403).json({
+          "error": "Wrong password",
+        });
+    }
   } else {
-    db.collection('users').findOne({email : email})
-      .then( async (data) => {
-        const result = await compare_hash(req.body.pwd, data.pwd);
-        if (result) {
-          const token = jsonwebtoken.sign({
-            "_id": data._id,
-          }, process.env.SECRET_KEY, {
-            expiresIn: "24h",
-          });
-        } else {
-          res.status(403).json({
-            "error": "Wrong password",
-          });
-        }
-      })
-      .catch(err => {
-        res.status(403).json({
-          "error": "This email doesn't exist"
-        });
-      });
+    res.status(403).json({
+      "error": "This identifier doesn't exist"
+    });
   }
 }
 

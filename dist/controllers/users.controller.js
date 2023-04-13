@@ -17,6 +17,7 @@ const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
 const instance_1 = require("../database/instance");
+const emailer_services_1 = require("../services/emailer.services");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -85,17 +86,11 @@ function createUser(req, res) {
                 .insertOne(req.body)
                 .then((data) => __awaiter(this, void 0, void 0, function* () {
                 const user_id = data.insertedId.toString();
+                const send = yield (0, emailer_services_1.email_verif_send)(user_id, req.body.email);
                 res.status(201).json(data);
-                const send = false;
-                // const send = await email_verif_send(user_id);
-                if (send) {
-                    console.log('email sent');
-                }
-                else {
-                    console.log('email not sent');
-                }
             }))
                 .catch(error => {
+                console.log(error);
                 res.status(500).json(error);
             });
         }
@@ -115,60 +110,38 @@ exports.createUser = createUser;
  */
 function connect_user(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const email = req.body.email;
-        const username = req.body.username;
-        if (username) {
-            instance_1.db.collection('users').findOne({ username: username })
-                .then((data) => __awaiter(this, void 0, void 0, function* () {
-                const result = yield compare_hash(req.body.pwd, data.pwd);
-                if (result) {
-                    const token = jsonwebtoken_1.default.sign({
-                        "_id": data._id,
-                    }, process.env.SECRET_KEY, {
-                        expiresIn: "24h",
-                    });
-                    res
-                        .cookie('access_token', token, {
-                        httpOnly: true,
-                        maxAge: 1000 * 3600 * 24,
-                    })
-                        .status(200).json({
-                        "Message": "Logged in successfully",
-                    });
-                }
-                else {
-                    res.status(403).json({
-                        "error": "Wrong password",
-                    });
-                }
-            }))
-                .catch(error => {
-                res.status(403).json({
-                    "error": "This username doesn't exist"
+        const identifier = req.body.identifier;
+        // verification si identifier existe
+        const username = yield instance_1.db.collection('users').findOne({ username: identifier });
+        const email = yield instance_1.db.collection('users').findOne({ email: identifier });
+        let user;
+        username ? user = username : user = email;
+        if (user) {
+            const result = yield compare_hash(req.body.pwd, user.pwd);
+            if (result) {
+                const token = jsonwebtoken_1.default.sign({
+                    "_id": user._id,
+                }, process.env.SECRET_KEY, {
+                    expiresIn: "24h",
                 });
-            });
+                res
+                    .cookie('access_token', token, {
+                    httpOnly: true,
+                    maxAge: 1000 * 3600 * 24,
+                })
+                    .status(200).json({
+                    "Message": "Logged in successfully",
+                });
+            }
+            else {
+                res.status(403).json({
+                    "error": "Wrong password",
+                });
+            }
         }
         else {
-            instance_1.db.collection('users').findOne({ email: email })
-                .then((data) => __awaiter(this, void 0, void 0, function* () {
-                const result = yield compare_hash(req.body.pwd, data.pwd);
-                if (result) {
-                    const token = jsonwebtoken_1.default.sign({
-                        "_id": data._id,
-                    }, process.env.SECRET_KEY, {
-                        expiresIn: "24h",
-                    });
-                }
-                else {
-                    res.status(403).json({
-                        "error": "Wrong password",
-                    });
-                }
-            }))
-                .catch(err => {
-                res.status(403).json({
-                    "error": "This email doesn't exist"
-                });
+            res.status(403).json({
+                "error": "This identifier doesn't exist"
             });
         }
     });
