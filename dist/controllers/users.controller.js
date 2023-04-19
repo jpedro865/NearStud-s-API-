@@ -17,8 +17,8 @@ const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
 const instance_1 = require("../database/instance");
-const emailer_services_1 = require("../services/emailer.services");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const Mailer_1 = require("../services/Mailer");
 /**
  * Controller pour rechercher tous les utilisateurs
  *
@@ -86,7 +86,8 @@ function createUser(req, res) {
                 .insertOne(req.body)
                 .then((data) => __awaiter(this, void 0, void 0, function* () {
                 const user_id = data.insertedId.toString();
-                const send = yield (0, emailer_services_1.email_verif_send)(user_id, req.body.email);
+                const mailer = new Mailer_1.Mailer();
+                const send = yield mailer.email_verif_send(user_id, req.body.email);
                 res.status(201).json(data);
             }))
                 .catch(error => {

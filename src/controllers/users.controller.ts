@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb';
 import bcrypt from 'bcrypt';
 import { UserValidator } from '../validator/users.validator';
 import { db } from '../database/instance';
-import { email_verif_send } from '../services/emailer.services';
 import jsonwebtoken from 'jsonwebtoken';
+import { Mailer } from '../services/Mailer';
 
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -68,7 +68,8 @@ export async function createUser(req: Request, res: Response) {
     .insertOne(req.body)
     .then( async (data) => {
       const user_id = data.insertedId.toString();
-      const send = await email_verif_send(user_id, req.body.email);
+      const mailer = new Mailer();
+      const send = await mailer.email_verif_send(user_id, req.body.email);
       res.status(201).json(data);
     })
     .catch( error => {

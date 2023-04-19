@@ -26,11 +26,6 @@ export async function addVerifToken(user_id: string) {
         used: false
       })
   }
-
-
-  
-
-  
 }
 
 export async function getTokenFromId(token_id: string) {
