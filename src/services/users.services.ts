@@ -8,5 +8,5 @@ export async function getUserById(user_id: string){
 
 export async function verifyUser(user_id: string){
   const update = await db.collection('users').updateOne({_id: new ObjectId(user_id)}, {$set: {verified: true}});
-  return update;
+  return update.acknowledged;
 }

@@ -30,14 +30,14 @@ class Mailer {
                     pass: process.env.E_PASS,
                 }
             });
-            const tokenAdd = yield (0, tokens_service_1.addVerifToken)(user_id);
-            if (tokenAdd) {
-                const token = yield (0, tokens_service_1.getTokenFromId)(tokenAdd.insertedId.toString());
+            const tokenAdded = yield (0, tokens_service_1.addVerifToken)(user_id);
+            if (tokenAdded.acknowledged) {
+                const token = yield (0, tokens_service_1.getTokenFromId)(tokenAdded.token_id.toString());
                 // gestion du template html
                 const html = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '../emails/verif_email.html'), 'utf-8');
                 const template = (0, handlebars_1.compile)(html);
                 const variables = {
-                    link: process.env.BASE_URL.concat(`/users/verif-email/${token}`.toString())
+                    link: `${process.env.BASE_URL}/users/verif-email/${token}`
                 };
                 const compiledHtml = template(variables);
                 // Options du mail
@@ -48,19 +48,24 @@ class Mailer {
                     html: compiledHtml
                 };
                 // Envoi du mail
-                const sent = transporteur.sendMail(emailOptions, (error, info) => {
-                    if (error) {
-                        console.log(error);
-                        return false;
-                    }
-                    else {
-                        return true;
-                    }
+                const sent = yield transporteur.sendMail(emailOptions)
+                    .then(() => {
+                    return true;
+                })
+                    .catch((err) => {
+                    console.error(err);
+                    return false;
                 });
-                return sent;
+                return {
+                    result: sent,
+                    message: sent ? "Email sent" : "Email not sent"
+                };
             }
             else {
-                return false;
+                return {
+                    result: false,
+                    message: "Token could not be created"
+                };
             }
         });
     }

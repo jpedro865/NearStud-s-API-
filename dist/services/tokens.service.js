@@ -26,17 +26,27 @@ function addVerifToken(user_id) {
             expiresIn: 1800,
         });
         if (hasToken) {
-            if (!hasToken.used) {
-                yield instance_1.db.collection('tokens').updateOne({ _id: hasToken._id }, { $set: { token, used: false } });
+            const updated = yield instance_1.db.collection('tokens').updateOne({ _id: hasToken._id }, { $set: { token, used: false } });
+            if (updated.acknowledged) {
+                return {
+                    acknowledged: updated.acknowledged,
+                    token_id: hasToken._id
+                };
             }
         }
         else {
-            return yield instance_1.db.collection('tokens')
+            const inserted = yield instance_1.db.collection('tokens')
                 .insertOne({
                 user_id,
                 token,
                 used: false
             });
+            if (inserted.acknowledged) {
+                return {
+                    acknowledged: inserted.acknowledged,
+                    token_id: inserted.insertedId
+                };
+            }
         }
     });
 }

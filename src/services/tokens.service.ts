@@ -14,17 +14,26 @@ export async function addVerifToken(user_id: string) {
   );
   
   if (hasToken) {
-    if (!hasToken.used){
-      await db.collection('tokens').updateOne({_id: hasToken._id}, {$set: {token, used: false}})
+    const updated = await db.collection('tokens').updateOne({_id: hasToken._id}, {$set: {token, used: false}});
+    if (updated.acknowledged) {
+      return {
+        acknowledged: updated.acknowledged,
+        token_id: hasToken._id
+      };
     }
   } else {
-    
-    return await db.collection('tokens')
+    const inserted =  await db.collection('tokens')
       .insertOne({
         user_id,
         token,
         used: false
       })
+    if (inserted.acknowledged) {
+      return {
+        acknowledged: inserted.acknowledged,
+        token_id: inserted.insertedId
+      };
+    }
   }
 }
 

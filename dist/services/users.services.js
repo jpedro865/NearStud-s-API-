@@ -22,7 +22,7 @@ exports.getUserById = getUserById;
 function verifyUser(user_id) {
     return __awaiter(this, void 0, void 0, function* () {
         const update = yield instance_1.db.collection('users').updateOne({ _id: new mongodb_1.ObjectId(user_id) }, { $set: { verified: true } });
-        return update;
+        return update.acknowledged;
     });
 }
 exports.verifyUser = verifyUser;

@@ -18,16 +18,15 @@ export class Mailer {
       }
     });
   
-    const tokenAdd = await addVerifToken(user_id);
-    
-    if (tokenAdd){
-      const token = await getTokenFromId(tokenAdd.insertedId.toString());
+    const tokenAdded = await addVerifToken(user_id);
+    if (tokenAdded.acknowledged){
+      const token = await getTokenFromId(tokenAdded.token_id.toString());
 
       // gestion du template html
       const html = readFileSync(join(__dirname, '../emails/verif_email.html'), 'utf-8');
       const template = compile(html);
       const variables = {
-        link: process.env.BASE_URL.concat(`/users/verif-email/${token}`.toString())
+        link: `${process.env.BASE_URL}/users/verif-email/${token}`
       }
       const compiledHtml = template(variables);
   
@@ -40,18 +39,24 @@ export class Mailer {
       }
 
       // Envoi du mail
-      const sent = transporteur.sendMail(emailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          return false;
-        } else {
+      const sent = await transporteur.sendMail(emailOptions)
+        .then(() => {
           return true;
-        }
-      })
-
-      return sent;
+        })
+        .catch((err) => {
+          console.error(err);
+          return false;
+        });
+      
+      return {
+        result: sent,
+        message: sent ? "Email sent" : "Email not sent"
+      }
     }else {
-      return false
+      return {
+        result: false,
+        message: "Token could not be created"
+      }
     }
   }
 }

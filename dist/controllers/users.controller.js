@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
+exports.deleteUser = exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
@@ -226,12 +226,34 @@ function resendEmail(req, res) {
         }
         else {
             const mailer = new Mailer_1.Mailer();
-            yield mailer.email_verif_send(user._id.toString(), req.body.email);
-            res.status(200).json({
-                'message': 'Email sent'
-            });
+            const sent = yield mailer.email_verif_send(user._id.toString(), req.body.email);
+            if (!sent.result) {
+                res.status(500).json({
+                    "error": sent.message
+                });
+            }
+            else {
+                res.status(200).json({
+                    'message': sent.message
+                });
+            }
         }
     });
 }
 exports.resendEmail = resendEmail;
+function deleteUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield instance_1.db.collection('users')
+            .deleteOne({ _id: new mongodb_1.ObjectId(req.params.id) })
+            .then((data) => {
+            res.status(200).json(data);
+        })
+            .catch((err) => {
+            res.status(500).json({
+                "Server_Error": err
+            });
+        });
+    });
+}
+exports.deleteUser = deleteUser;
 //# sourceMappingURL=users.controller.js.map

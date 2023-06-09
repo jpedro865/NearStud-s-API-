@@ -198,9 +198,28 @@ export async function resendEmail(req: Request, res: Response) {
     });
   } else {
     const mailer = new Mailer();
-    await mailer.email_verif_send(user._id.toString(), req.body.email);
-    res.status(200).json({
-      'message': 'Email sent'
-    });
+    const sent = await mailer.email_verif_send(user._id.toString(), req.body.email);
+    if (!sent.result) {
+      res.status(500).json({
+        "error": sent.message
+      });
+    } else {
+      res.status(200).json({
+        'message': sent.message
+      });
+    }
   }
+}
+
+export async function deleteUser(req: Request, res: Response) {
+  await db.collection('users')
+    .deleteOne({_id: new ObjectId(req.params.id)})
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        "Server_Error" : err
+      })
+    });
 }
