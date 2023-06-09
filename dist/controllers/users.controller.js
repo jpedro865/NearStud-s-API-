@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
+exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
@@ -211,4 +211,27 @@ function compare_hash(pwd, hash) {
         return result;
     });
 }
+function resendEmail(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield instance_1.db.collection('users').findOne({ email: req.body.email });
+        if (!user) {
+            res.status(403).json({
+                "error": "This email doesn't exist"
+            });
+        }
+        else if (user.verified) {
+            res.status(403).json({
+                "error": "This account is already verified"
+            });
+        }
+        else {
+            const mailer = new Mailer_1.Mailer();
+            yield mailer.email_verif_send(user._id.toString(), req.body.email);
+            res.status(200).json({
+                'message': 'Email sent'
+            });
+        }
+    });
+}
+exports.resendEmail = resendEmail;
 //# sourceMappingURL=users.controller.js.map

@@ -184,3 +184,23 @@ async function compare_hash(pwd: string, hash: string) {
   const result = await bcrypt.compare(pwd, hash);
   return result
 }
+
+export async function resendEmail(req: Request, res: Response) {
+  const user = await db.collection('users').findOne({email: req.body.email})
+
+  if (!user) {
+    res.status(403).json({
+      "error": "This email doesn't exist"
+    });
+  } else if (user.verified) {
+    res.status(403).json({
+      "error": "This account is already verified"
+    });
+  } else {
+    const mailer = new Mailer();
+    await mailer.email_verif_send(user._id.toString(), req.body.email);
+    res.status(200).json({
+      'message': 'Email sent'
+    });
+  }
+}

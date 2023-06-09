@@ -5,20 +5,20 @@ import { ObjectId } from "mongodb";
 require('dotenv').config();
 
 export async function addVerifToken(user_id: string) {
+  const hasToken = await db.collection('tokens').findOne({user_id});
   const token = jsonwebtoken.sign({
       _id: user_id,
     }, process.env.KEY_TOKEN,{
       expiresIn: 1800,
     }
   );
-
-  const hasToken = await db.collection('tokens').findOne({user_id});
-
+  
   if (hasToken) {
     if (!hasToken.used){
       await db.collection('tokens').updateOne({_id: hasToken._id}, {$set: {token, used: false}})
     }
   } else {
+    
     return await db.collection('tokens')
       .insertOne({
         user_id,

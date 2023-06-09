@@ -19,12 +19,12 @@ const mongodb_1 = require("mongodb");
 require('dotenv').config();
 function addVerifToken(user_id) {
     return __awaiter(this, void 0, void 0, function* () {
+        const hasToken = yield instance_1.db.collection('tokens').findOne({ user_id });
         const token = jsonwebtoken_1.default.sign({
             _id: user_id,
         }, process.env.KEY_TOKEN, {
             expiresIn: 1800,
         });
-        const hasToken = yield instance_1.db.collection('tokens').findOne({ user_id });
         if (hasToken) {
             if (!hasToken.used) {
                 yield instance_1.db.collection('tokens').updateOne({ _id: hasToken._id }, { $set: { token, used: false } });
