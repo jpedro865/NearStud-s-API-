@@ -69,7 +69,7 @@ export async function createUser(req: Request, res: Response) {
     .then( async (data) => {
       const user_id = data.insertedId.toString();
       const mailer = new Mailer();
-      const send = await mailer.email_verif_send(user_id, req.body.email);
+      await mailer.email_verif_send(user_id, req.body.email);
       res.status(201).json(data);
     })
     .catch( error => {
@@ -96,30 +96,51 @@ export async function connect_user(req: Request, res: Response) {
   const username = await db.collection('users').findOne({username: identifier})
   const email = await db.collection('users').findOne({email: identifier})
   let user;
-  username ? user = username : user = email;
+
+  if (username) {
+    user = username;
+  } else if (email) {
+    user = email;
+  } else {
+    res.status(403).json({
+      "error": "This identifier doesn't exist"
+    });
+  }
   
+  // si utilisateur existe
   if (user) {
-    const result = await compare_hash(req.body.pwd, user.pwd);
-    if (result) {
-      const token = jsonwebtoken.sign({
-        "_id": user._id,
-      }, process.env.SECRET_KEY, {
-        expiresIn: "24h",
-      });
-      res
-      .cookie('access_token', token, {
-        httpOnly: true,
-        maxAge: 1000 * 3600 * 24,
-      })
-      .status(200).json({
-        "Message": "Logged in successfully",
-      });
-    } else {
+    // si utilisateur n'est pas verifie
+    if (!user.verified) {
       res.status(403).json({
+        "error": "This account is not verified"
+      });
+    } else
+    // si utilisateur est verifie
+    {
+      const result = await compare_hash(req.body.pwd, user.pwd);
+      if (result) {
+        const token = jsonwebtoken.sign({
+          "_id": user._id,
+        }, process.env.SECRET_KEY, {
+          expiresIn: "24h",
+        });
+        res
+        .cookie('access_token', token, {
+          httpOnly: true,
+          maxAge: 1000 * 3600 * 24,
+        })
+        .status(200).json({
+          "Message": "Logged in successfully",
+        });
+      } else {
+        res.status(403).json({
           "error": "Wrong password",
         });
+      }
     }
-  } else {
+  } else
+  // si utilisateur n'existe pas
+  {
     res.status(403).json({
       "error": "This identifier doesn't exist"
     });
