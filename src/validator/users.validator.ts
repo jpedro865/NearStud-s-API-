@@ -29,6 +29,36 @@ export class UserValidator extends Validator {
   }
 
   /**
+   * validateUserUpdate
+   * 
+   * @param req 
+   */
+  public async validateUserUpdate(req: Request) {
+    const user: any = req.body;
+
+    if (user.email) {
+      this.isMail(user.email);
+      await this.checkEmailExists(user.email);
+    }
+    if (user.username) {
+      await this.checkUserNameExists(user.username);
+    }
+    if (user.pwd) {
+      this.isEmpty(user.pwd);
+    }
+    if (user.firstname) {
+      this.isEmpty(user.firstname);
+    }
+    if (user.lastname) {
+      this.isEmpty(user.lastname);
+    }
+    if (user.admin) {
+      this.isEmpty(user.admin);
+      this.isBoolean(user.admin);
+    }
+  }
+
+  /**
    * Verifies if the User username we want to create
    * already exists in the db
    * 

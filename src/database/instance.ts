@@ -13,23 +13,13 @@ async function connectdb() {
   try {
     await client.connect();
     await  client.db("admin").command({ping: 1});
-    console.log('Connected successfully to server');
+    console.log('Connected successfully to Database');
   } catch (err) {
-    console.log('Connected to server refused/failed')
+    console.log('Connection to Database refused/failed');
+    console.log('Error de connection:\n', err);
   } finally {
     client.close();
   }
-  
-  // MongoClient.connect(`mongodb+srv://${user}:${password}@cluster0.amzseaz.mongodb.net/?retryWrites=true&w=majority`)
-  //   .then( client => {
-  //     dbConnection = client.db(process.env.DB_NAME);
-  //     console.log("connection ok");
-  //     return callback;
-  //   })
-  //   .catch( error => {
-  //     console.log(error);
-  //     return callback(error);
-  //   });
 }
 
 if (process.argv[2] === 'dbcheck') {

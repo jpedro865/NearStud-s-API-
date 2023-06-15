@@ -163,28 +163,11 @@ export function logout(req: Request, res: Response) {
 }
 
 /**
- * Cryptage du mot-de-passe
+ * resendEmail
  * 
- * @param pwd 
- * @returns string
+ * @param req 
+ * @param res 
  */
-async function crypt_pwd(pwd: string) {
-  const hash = await bcrypt.hash(pwd, 8);
-  return hash
-}
-
-/**
- * Compare hashed mdp et mdp string
- * 
- * @param pwd 
- * @param hash 
- * @returns boolean
- */
-async function compare_hash(pwd: string, hash: string) {
-  const result = await bcrypt.compare(pwd, hash);
-  return result
-}
-
 export async function resendEmail(req: Request, res: Response) {
   const user = await db.collection('users').findOne({email: req.body.email})
 
@@ -211,6 +194,12 @@ export async function resendEmail(req: Request, res: Response) {
   }
 }
 
+/**
+* deleteUser
+* 
+* @param req 
+* @param res 
+*/
 export async function deleteUser(req: Request, res: Response) {
   await db.collection('users')
     .deleteOne({_id: new ObjectId(req.params.id)})
@@ -221,5 +210,80 @@ export async function deleteUser(req: Request, res: Response) {
       res.status(500).json({
         "Server_Error" : err
       })
-    });
+    }
+  );
 }
+
+/**
+* updateUser
+* 
+* @param req 
+* @param res 
+*/
+export async function updateUser(req: Request, res: Response) {
+  const validator: UserValidator = new UserValidator();
+  await validator.validateUserUpdate(req);
+
+  if (validator.isValid()) {
+    const jsonData = await UpdateDataParse(req);
+    await db.collection('users')
+        .updateOne({_id: new ObjectId(req.params.id)},
+          {
+            ...jsonData
+          })
+        .then((data) => {
+          res.status(200).json(data);
+        })
+        .catch((err) => {
+          res.status(500).json({
+            "Server_Error" : err
+          })
+        }
+      );
+  } else {
+    res.status(400).json({
+      'error_list': validator.getErrors()
+    });
+  }
+}
+
+/** *************************** Helper Functions ****************************** */
+
+/**
+* Cryptage du mot-de-passe
+* 
+* @param pwd 
+* @returns string
+*/
+async function crypt_pwd(pwd: string) {
+  const hash = await bcrypt.hash(pwd, 8);
+  return hash
+}
+
+/**
+* Compare hashed mdp et mdp string
+* 
+* @param pwd 
+* @param hash 
+* @returns boolean
+*/
+async function compare_hash(pwd: string, hash: string) {
+  const result = await bcrypt.compare(pwd, hash);
+  return result
+}
+
+async function UpdateDataParse(req: Request) {
+  let data = '{"$set": {';
+  req.body.firstname? data += '"firstname": "' + req.body.firstname + '",': data+= '';
+  req.body.lastname? data += '"lastname": "' + req.body.lastname + '",': data+= '';
+  req.body.username? data += '"username": "' + req.body.username + '",': data+= '';
+  req.body.email? data += '"email": "' + req.body.email + '",': data+= '';
+  req.body.pwd? data += '"pwd":"' + await crypt_pwd(req.body.pwd) + '",': data+= '';
+  req.body.admin? data += '"admin": ' + req.body.admin + ',': data+= '';
+  data += '}}';
+  data = data.replace(',}}', '}}');
+  const jsonData = JSON.parse(data);
+  return jsonData
+}
+
+

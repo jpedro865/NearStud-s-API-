@@ -36,6 +36,36 @@ class UserValidator extends validator_1.Validator {
         });
     }
     /**
+     * validateUserUpdate
+     *
+     * @param req
+     */
+    validateUserUpdate(req) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = req.body;
+            if (user.email) {
+                this.isMail(user.email);
+                yield this.checkEmailExists(user.email);
+            }
+            if (user.username) {
+                yield this.checkUserNameExists(user.username);
+            }
+            if (user.pwd) {
+                this.isEmpty(user.pwd);
+            }
+            if (user.firstname) {
+                this.isEmpty(user.firstname);
+            }
+            if (user.lastname) {
+                this.isEmpty(user.lastname);
+            }
+            if (user.admin) {
+                this.isEmpty(user.admin);
+                this.isBoolean(user.admin);
+            }
+        });
+    }
+    /**
      * Verifies if the User username we want to create
      * already exists in the db
      *

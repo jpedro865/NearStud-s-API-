@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
+exports.updateUser = exports.deleteUser = exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
@@ -187,30 +187,11 @@ function logout(req, res) {
 }
 exports.logout = logout;
 /**
- * Cryptage du mot-de-passe
+ * resendEmail
  *
- * @param pwd
- * @returns string
+ * @param req
+ * @param res
  */
-function crypt_pwd(pwd) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const hash = yield bcrypt_1.default.hash(pwd, 8);
-        return hash;
-    });
-}
-/**
- * Compare hashed mdp et mdp string
- *
- * @param pwd
- * @param hash
- * @returns boolean
- */
-function compare_hash(pwd, hash) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const result = yield bcrypt_1.default.compare(pwd, hash);
-        return result;
-    });
-}
 function resendEmail(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield instance_1.db.collection('users').findOne({ email: req.body.email });
@@ -241,6 +222,12 @@ function resendEmail(req, res) {
     });
 }
 exports.resendEmail = resendEmail;
+/**
+* deleteUser
+*
+* @param req
+* @param res
+*/
 function deleteUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         yield instance_1.db.collection('users')
@@ -256,4 +243,76 @@ function deleteUser(req, res) {
     });
 }
 exports.deleteUser = deleteUser;
+/**
+* updateUser
+*
+* @param req
+* @param res
+*/
+function updateUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const validator = new users_validator_1.UserValidator();
+        yield validator.validateUserUpdate(req);
+        if (validator.isValid()) {
+            const jsonData = yield UpdateDataParse(req);
+            yield instance_1.db.collection('users')
+                .updateOne({ _id: new mongodb_1.ObjectId(req.params.id) }, Object.assign({}, jsonData))
+                .then((data) => {
+                res.status(200).json(data);
+            })
+                .catch((err) => {
+                res.status(500).json({
+                    "Server_Error": err
+                });
+            });
+        }
+        else {
+            res.status(400).json({
+                'error_list': validator.getErrors()
+            });
+        }
+    });
+}
+exports.updateUser = updateUser;
+/** *************************** Helper Functions ****************************** */
+/**
+* Cryptage du mot-de-passe
+*
+* @param pwd
+* @returns string
+*/
+function crypt_pwd(pwd) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const hash = yield bcrypt_1.default.hash(pwd, 8);
+        return hash;
+    });
+}
+/**
+* Compare hashed mdp et mdp string
+*
+* @param pwd
+* @param hash
+* @returns boolean
+*/
+function compare_hash(pwd, hash) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield bcrypt_1.default.compare(pwd, hash);
+        return result;
+    });
+}
+function UpdateDataParse(req) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let data = '{"$set": {';
+        req.body.firstname ? data += '"firstname": "' + req.body.firstname + '",' : data += '';
+        req.body.lastname ? data += '"lastname": "' + req.body.lastname + '",' : data += '';
+        req.body.username ? data += '"username": "' + req.body.username + '",' : data += '';
+        req.body.email ? data += '"email": "' + req.body.email + '",' : data += '';
+        req.body.pwd ? data += '"pwd":"' + (yield crypt_pwd(req.body.pwd)) + '",' : data += '';
+        req.body.admin ? data += '"admin": ' + req.body.admin + ',' : data += '';
+        data += '}}';
+        data = data.replace(',}}', '}}');
+        const jsonData = JSON.parse(data);
+        return jsonData;
+    });
+}
 //# sourceMappingURL=users.controller.js.map
