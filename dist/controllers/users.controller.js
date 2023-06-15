@@ -142,6 +142,7 @@ function connect_user(req, res) {
                 if (result) {
                     const token = jsonwebtoken_1.default.sign({
                         "_id": user._id,
+                        "admin": user.admin,
                     }, process.env.SECRET_KEY, {
                         expiresIn: "24h",
                     });

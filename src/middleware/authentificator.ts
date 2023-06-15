@@ -17,7 +17,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
     jsonwebtoken.verify(token, process.env.SECRET_KEY, (err: any, data: any) => {
       if (err) {
         res.status(403).json({
-          message: `Sorry, there seems to be an error: ${err}`,
+          message: `Desole, une erreur est survenu: ${err}`,
         });
       } else {
         req.body.data = data;

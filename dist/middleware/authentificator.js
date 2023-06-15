@@ -20,7 +20,7 @@ function auth(req, res, next) {
         jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, (err, data) => {
             if (err) {
                 res.status(403).json({
-                    message: `Sorry, there seems to be an error: ${err}`,
+                    message: `Desole, une erreur est survenu: ${err}`,
                 });
             }
             else {

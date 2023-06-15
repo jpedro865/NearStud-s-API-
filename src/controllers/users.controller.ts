@@ -121,6 +121,7 @@ export async function connect_user(req: Request, res: Response) {
       if (result) {
         const token = jsonwebtoken.sign({
           "_id": user._id,
+          "admin": user.admin,
         }, process.env.SECRET_KEY, {
           expiresIn: "24h",
         });
