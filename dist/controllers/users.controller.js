@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.deleteUser = exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
+exports.deleteFields = exports.addFields = exports.updateUser = exports.deleteUser = exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
@@ -275,6 +275,48 @@ function updateUser(req, res) {
     });
 }
 exports.updateUser = updateUser;
+function addFields(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const fields_name = JSON.stringify(req.body).match(/"([^"]*)"/g).join().replace(/"/g, '').split(',');
+        let matchString = '{ "email": {"$exists": true}, ';
+        for (let i = 0; i < fields_name.length; i++) {
+            matchString += '"' + fields_name[i] + '": {"$exists": false},';
+        }
+        matchString += "}";
+        matchString = matchString.replace(',}', '}');
+        const matchData = JSON.parse(matchString);
+        yield instance_1.db.collection('users')
+            .updateMany(Object.assign({}, matchData), {
+            $set: Object.assign({}, req.body)
+        })
+            .then((data) => {
+            res.status(200).json(data);
+        })
+            .catch((err) => {
+            res.status(500).json({
+                "Server_Error": err
+            });
+        });
+    });
+}
+exports.addFields = addFields;
+function deleteFields(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield instance_1.db.collection('users')
+            .updateMany({ email: { $exists: true } }, {
+            $unset: Object.assign({}, req.body)
+        })
+            .then((data) => {
+            res.status(200).json(data);
+        })
+            .catch((err) => {
+            res.status(500).json({
+                "Server_Error": err
+            });
+        });
+    });
+}
+exports.deleteFields = deleteFields;
 /** *************************** Helper Functions ****************************** */
 /**
 * Cryptage du mot-de-passe

@@ -20,7 +20,6 @@ export function auth(req: Request, res: Response, next: NextFunction) {
           message: `Desole, une erreur est survenu: ${err}`,
         });
       } else {
-        req.body.data = data;
         next();
       }
     });

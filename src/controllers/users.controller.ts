@@ -248,6 +248,52 @@ export async function updateUser(req: Request, res: Response) {
   }
 }
 
+export async function addFields(req: Request, res: Response) {
+  const fields_name = JSON.stringify(req.body).match(/"([^"]*)"/g).join().replace(/"/g, '').split(',');
+
+  let matchString = '{ "email": {"$exists": true}, ';
+  for (let i = 0; i < fields_name.length; i++) {
+    matchString += '"' + fields_name[i] + '": {"$exists": false},';
+  }
+  matchString += "}";
+  matchString = matchString.replace(',}', '}');
+  const matchData = JSON.parse(matchString);
+
+  await db.collection('users')
+    .updateMany({...matchData},
+      {
+        $set: {
+          ...req.body
+        }
+      })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        "Server_Error" : err
+      })
+    });
+}
+
+export async function deleteFields(req: Request, res: Response) {  
+  await db.collection('users')
+    .updateMany({email: {$exists: true}},
+      {
+        $unset: {
+          ...req.body
+        }
+      })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        "Server_Error" : err
+      })
+    });
+}
+
 /** *************************** Helper Functions ****************************** */
 
 /**

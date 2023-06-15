@@ -7,7 +7,6 @@ exports.hasRigths = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 function hasRigths(req, res, next) {
     const tokenData = jsonwebtoken_1.default.decode(req.cookies.access_token);
-    console.log('token: ', tokenData);
     if (req.params.id === (tokenData === null || tokenData === void 0 ? void 0 : tokenData._id) || (tokenData === null || tokenData === void 0 ? void 0 : tokenData.admin) === 1) {
         next();
     }

@@ -15,5 +15,7 @@ UserRouter.post('/logout', users_controller_1.logout);
 UserRouter.post('/resend-email', users_controller_1.resendEmail);
 UserRouter.delete('/:id', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.deleteUser);
 UserRouter.patch('/:id', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.updateUser);
+UserRouter.post('/add-fields', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.addFields);
+UserRouter.post('/delete-fields', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.deleteFields);
 exports.default = UserRouter;
 //# sourceMappingURL=users.route.js.map
