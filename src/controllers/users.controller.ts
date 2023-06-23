@@ -252,8 +252,8 @@ export async function addFields(req: Request, res: Response) {
   const fields_name = JSON.stringify(req.body).match(/"([^"]*)"/g).join().replace(/"/g, '').split(',');
 
   let matchString = '{ "email": {"$exists": true}, ';
-  for (let i = 0; i < fields_name.length; i++) {
-    matchString += '"' + fields_name[i] + '": {"$exists": false},';
+  for (const element of fields_name) {
+    matchString += '"' + element + '": {"$exists": false},';
   }
   matchString += "}";
   matchString = matchString.replace(',}', '}');
