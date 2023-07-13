@@ -13,7 +13,7 @@ export class Validator {
    * @returns boolean
    */
   public isEmpty(value: any) {
-    if ( value == null || value == undefined) {
+    if ( value == null || value == undefined || value == '' || value.length == 0) {
       this.setError('This case is empty');
     }
   }

@@ -16,7 +16,7 @@ class Validator {
      * @returns boolean
      */
     isEmpty(value) {
-        if (value == null || value == undefined) {
+        if (value == null || value == undefined || value == '' || value.length == 0) {
             this.setError('This case is empty');
         }
     }
