@@ -9,16 +9,82 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createResto = void 0;
+exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
+const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 const resto_validator_1 = require("../validator/resto.validator");
+/**
+ * createResto
+ *
+ * @param req
+ * @param res
+ */
 function createResto(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const validator = new resto_validator_1.RestoValidator();
         validator.validateRestoCreation(req);
-        yield instance_1.db.collection('restaurants')
-            .insertOne(req.body);
+        if (validator.isValid()) {
+            yield instance_1.db.collection('restaurants')
+                .insertOne(req.body)
+                .then((data) => {
+                res.status(201).json(data);
+            })
+                .catch(e => {
+                res.status(500).json({
+                    "ERREUR_SERVER": e
+                });
+            });
+        }
+        else {
+            res.status(400).json({
+                'error_list': validator.getErrors()
+            });
+        }
     });
 }
 exports.createResto = createResto;
+/**
+ * getRestoById
+ *
+ * @param req
+ * @param res
+ */
+function getRestoById(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const _id = req.params.id;
+        yield instance_1.db.collection('restaurants')
+            .findOne({ _id: new mongodb_1.ObjectId(_id) })
+            .then(data => {
+            res.status(200).json(data);
+        })
+            .catch(e => {
+            res.status(500).json({
+                "ERREUR_SERVER": e
+            });
+        });
+    });
+}
+exports.getRestoById = getRestoById;
+/**
+ * getAllResto
+ *
+ * @param req
+ * @param res
+ */
+function getAllResto(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield instance_1.db.collection('restaurants')
+            .find()
+            .toArray()
+            .then(data => {
+            res.status(200).json(data);
+        })
+            .catch(e => {
+            res.status(500).json({
+                "ERREUR_SERVER": e
+            });
+        });
+    });
+}
+exports.getAllResto = getAllResto;
 //# sourceMappingURL=resto.controllers.js.map

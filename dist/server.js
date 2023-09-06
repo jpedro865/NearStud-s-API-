@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const users_route_1 = __importDefault(require("./routes/users.route"));
+const resto_route_1 = __importDefault(require("./routes/resto.route"));
 require('dotenv').config();
 // init app/middleware
 const port = process.env.SERVER_PORT;
@@ -20,8 +21,9 @@ app.use((0, cors_1.default)({
 }));
 // teeling express to use json
 app.use(express_1.default.json());
-// routes here
+// routers here
 app.use('/users', users_route_1.default);
+app.use('/restos', resto_route_1.default);
 app.get('/', (req, res) => {
     res.status(200).json({
         "this": "NearStud's APi",

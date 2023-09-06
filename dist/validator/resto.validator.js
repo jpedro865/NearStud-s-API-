@@ -17,7 +17,16 @@ class RestoValidator extends validator_1.Validator {
         this.isEmpty(resto.adresse.pays);
         this.isEmpty(resto.coord);
         this.isEmpty(resto.cuisine);
-        this.isString(resto.nom);
+        if (this.isValid()) {
+            this.isString(resto.nom);
+            this.isNumber(resto.adresse.cp);
+            this.isString(resto.adresse.ville);
+            this.isString(resto.adresse.rue);
+            this.isString(resto.adresse.pays);
+            this.isNumber(resto.coord[0]);
+            this.isNumber(resto.coord[1]);
+            this.isArrayOfString(resto.cuisine);
+        }
     }
 }
 exports.RestoValidator = RestoValidator;

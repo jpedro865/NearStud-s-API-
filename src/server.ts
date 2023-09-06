@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import UserRouter from './routes/users.route';
+import restoRouter from './routes/resto.route';
 
 require('dotenv').config();
 
@@ -22,8 +23,9 @@ app.use(cors({
 app.use(express.json());
 
 
-// routes here
+// routers here
 app.use('/users', UserRouter);
+app.use('/restos', restoRouter)
 
 app.get('/', ( req: Request, res: Response) => {
   res.status(200).json({

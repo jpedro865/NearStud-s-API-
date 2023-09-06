@@ -63,6 +63,23 @@ export class Validator {
     }
   }
 
+  public isArrayOfString(value: any) {
+    if (Array.isArray(value)) {
+      var somethingIsNotString = false;
+      value.forEach(function(item){
+        if(typeof item !== 'string'){
+          somethingIsNotString = true;
+        }
+      });
+      console.log(!somethingIsNotString && value.length > 0)
+      if(somethingIsNotString && value.length > 0){
+        this.setError('This value is not an array of string');
+      }
+    } else {
+      this.setError('This value is not an array of string');
+    }
+  }
+
   /**
    * isValid
    * 
