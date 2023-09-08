@@ -24,7 +24,9 @@ class Mailer {
         return __awaiter(this, void 0, void 0, function* () {
             // setup du transporteur de mail
             const transporteur = nodemailer_1.default.createTransport({
-                service: 'gmail',
+                host: process.env.MAIL_SERVICE,
+                port: 465,
+                secure: true,
                 auth: {
                     user: process.env.EMAIL,
                     pass: process.env.E_PASS,

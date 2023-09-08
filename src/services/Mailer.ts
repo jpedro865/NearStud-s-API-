@@ -11,7 +11,9 @@ export class Mailer {
   async email_verif_send(user_id: string, user_email: string) {
     // setup du transporteur de mail
     const transporteur = nodemailer.createTransport({
-      service: 'gmail',
+      host: process.env.MAIL_SERVICE,
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL,
         pass: process.env.E_PASS,
