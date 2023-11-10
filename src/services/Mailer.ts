@@ -25,7 +25,7 @@ export class Mailer {
       const token = await getTokenFromId(tokenAdded.token_id.toString());
 
       // gestion du template html
-      const html = readFileSync(join(__dirname, '../emails/verif_email.html'), 'utf-8');
+      const html = readFileSync(join(__dirname, '../../public/emails/verif_email.html'), 'utf-8');
       const template = compile(html);
       const variables = {
         link: `${process.env.BASE_URL}/users/verif-email/${token}`

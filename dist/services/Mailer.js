@@ -36,7 +36,7 @@ class Mailer {
             if (tokenAdded.acknowledged) {
                 const token = yield (0, tokens_service_1.getTokenFromId)(tokenAdded.token_id.toString());
                 // gestion du template html
-                const html = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '../emails/verif_email.html'), 'utf-8');
+                const html = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '../../public/emails/verif_email.html'), 'utf-8');
                 const template = (0, handlebars_1.compile)(html);
                 const variables = {
                     link: `${process.env.BASE_URL}/users/verif-email/${token}`
