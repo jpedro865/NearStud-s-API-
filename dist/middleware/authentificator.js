@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.auth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-require('dotenv').config(); // Calling .env file
+const environment_1 = __importDefault(require("../utils/environment"));
 function auth(req, res, next) {
     // recovery of the token in header without the bearer
     const token = req.cookies.access_token;
@@ -17,7 +17,7 @@ function auth(req, res, next) {
     }
     else {
         // verification of the validity of the token thanks to the public key
-        jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, (err, data) => {
+        jsonwebtoken_1.default.verify(token, environment_1.default.SECRET_KEY, (err, data) => {
             if (err) {
                 res.status(403).json({
                     message: `Desole, une erreur est survenu: ${err}`,

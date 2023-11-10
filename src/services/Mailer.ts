@@ -3,20 +3,19 @@ import { addVerifToken, getTokenFromId } from './tokens.service';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { compile } from 'handlebars';
-
-require('dotenv').config();
+import env_vars from '../utils/environment';
 
 
 export class Mailer {
   async email_verif_send(user_id: string, user_email: string) {
     // setup du transporteur de mail
     const transporteur = nodemailer.createTransport({
-      host: process.env.MAIL_SERVICE,
+      host: env_vars.MAIL_SERVICE,
       port: 465,
       secure: true,
       auth: {
-        user: process.env.EMAIL,
-        pass: process.env.E_PASS,
+        user: env_vars.EMAIL,
+        pass: env_vars.E_PASS,
       }
     });
   
@@ -28,13 +27,13 @@ export class Mailer {
       const html = readFileSync(join(__dirname, '../../public/emails/verif_email.html'), 'utf-8');
       const template = compile(html);
       const variables = {
-        link: `${process.env.BASE_URL}/users/verif-email/${token}`
+        link: `${env_vars.BASE_URL}/users/verif-email/${token}`
       }
       const compiledHtml = template(variables);
   
       // Options du mail
       const emailOptions = {
-        from: process.env.EMAIL,
+        from: env_vars.EMAIL,
         to: user_email,
         subject: "Verification compte NearStud's",
         html: compiledHtml

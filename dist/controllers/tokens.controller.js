@@ -16,10 +16,11 @@ exports.valid_email_token = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const tokens_service_1 = require("../services/tokens.service");
 const users_services_1 = require("../services/users.services");
+const environment_1 = __importDefault(require("../utils/environment"));
 function valid_email_token(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const token = req.params.token;
-        jsonwebtoken_1.default.verify(token, process.env.KEY_TOKEN, (err, data) => __awaiter(this, void 0, void 0, function* () {
+        jsonwebtoken_1.default.verify(token, environment_1.default.KEY_TOKEN, (err, data) => __awaiter(this, void 0, void 0, function* () {
             if (err) {
                 res.status(403).json({
                     'Email verification': {

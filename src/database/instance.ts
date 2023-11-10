@@ -1,9 +1,8 @@
 import  { MongoClient } from 'mongodb';
+import env_vars from '../utils/environment';
 
-require('dotenv').config();
-
-const user = process.env.DB_USER;
-const password = process.env.DB_PASSWORD;
+const user = env_vars.DB_USER;
+const password = env_vars.DB_PASSWORD;
 
 const uri = `mongodb+srv://${user}:${password}@cluster0.amzseaz.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -26,6 +25,6 @@ if (process.argv[2] === 'dbcheck') {
   connectdb();
 }
 
-const db = client.db(process.env.DB_NAME)
+const db = client.db(env_vars.DB_NAME)
 
 export { db, client };

@@ -18,18 +18,18 @@ const tokens_service_1 = require("./tokens.service");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const handlebars_1 = require("handlebars");
-require('dotenv').config();
+const environment_1 = __importDefault(require("../utils/environment"));
 class Mailer {
     email_verif_send(user_id, user_email) {
         return __awaiter(this, void 0, void 0, function* () {
             // setup du transporteur de mail
             const transporteur = nodemailer_1.default.createTransport({
-                host: process.env.MAIL_SERVICE,
+                host: environment_1.default.MAIL_SERVICE,
                 port: 465,
                 secure: true,
                 auth: {
-                    user: process.env.EMAIL,
-                    pass: process.env.E_PASS,
+                    user: environment_1.default.EMAIL,
+                    pass: environment_1.default.E_PASS,
                 }
             });
             const tokenAdded = yield (0, tokens_service_1.addVerifToken)(user_id);
@@ -39,12 +39,12 @@ class Mailer {
                 const html = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '../../public/emails/verif_email.html'), 'utf-8');
                 const template = (0, handlebars_1.compile)(html);
                 const variables = {
-                    link: `${process.env.BASE_URL}/users/verif-email/${token}`
+                    link: `${environment_1.default.BASE_URL}/users/verif-email/${token}`
                 };
                 const compiledHtml = template(variables);
                 // Options du mail
                 const emailOptions = {
-                    from: process.env.EMAIL,
+                    from: environment_1.default.EMAIL,
                     to: user_email,
                     subject: "Verification compte NearStud's",
                     html: compiledHtml

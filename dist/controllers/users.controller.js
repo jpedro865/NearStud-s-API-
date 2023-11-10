@@ -19,6 +19,7 @@ const users_validator_1 = require("../validator/users.validator");
 const instance_1 = require("../database/instance");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Mailer_1 = require("../services/Mailer");
+const environment_1 = __importDefault(require("../utils/environment"));
 /**
  * Controller pour rechercher tous les utilisateurs
  *
@@ -145,7 +146,7 @@ function connect_user(req, res) {
                     const token = jsonwebtoken_1.default.sign({
                         "_id": user._id,
                         "admin": user.admin,
-                    }, process.env.SECRET_KEY, {
+                    }, environment_1.default.SECRET_KEY, {
                         expiresIn: "24h",
                     });
                     res

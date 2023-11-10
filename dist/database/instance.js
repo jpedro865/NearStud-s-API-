@@ -8,12 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = exports.db = void 0;
 const mongodb_1 = require("mongodb");
-require('dotenv').config();
-const user = process.env.DB_USER;
-const password = process.env.DB_PASSWORD;
+const environment_1 = __importDefault(require("../utils/environment"));
+const user = environment_1.default.DB_USER;
+const password = environment_1.default.DB_PASSWORD;
 const uri = `mongodb+srv://${user}:${password}@cluster0.amzseaz.mongodb.net/?retryWrites=true&w=majority`;
 const client = new mongodb_1.MongoClient(uri);
 exports.client = client;
@@ -36,6 +39,6 @@ function connectdb() {
 if (process.argv[2] === 'dbcheck') {
     connectdb();
 }
-const db = client.db(process.env.DB_NAME);
+const db = client.db(environment_1.default.DB_NAME);
 exports.db = db;
 //# sourceMappingURL=instance.js.map

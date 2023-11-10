@@ -3,11 +3,10 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import UserRouter from './routes/users.route';
 import restoRouter from './routes/resto.route';
-
-require('dotenv').config();
+import env_vars from './utils/environment';
 
 // init app/middleware
-const port = process.env.SERVER_PORT;
+const port = env_vars.SERVER_PORT;
 const app: Application = express();
 
 // cookie Parser setup
@@ -15,7 +14,7 @@ app.use(cookieParser());
 
 // Cors setup
 app.use(cors({
-  origin: `http://localhost:${process.env.CLIENT_PORT}`,
+  origin: `http://localhost:${env_vars.CLIENT_PORT}`,
   credentials: true,
 }));
 

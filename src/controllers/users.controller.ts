@@ -5,6 +5,7 @@ import { UserValidator } from '../validator/users.validator';
 import { db } from '../database/instance';
 import jsonwebtoken from 'jsonwebtoken';
 import { Mailer } from '../services/Mailer';
+import env_vars from '../utils/environment';
 
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -124,7 +125,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
         const token = jsonwebtoken.sign({
           "_id": user._id,
           "admin": user.admin,
-        }, process.env.SECRET_KEY, {
+        }, env_vars.SECRET_KEY, {
           expiresIn: "24h",
         });
         res

@@ -8,15 +8,15 @@ const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const users_route_1 = __importDefault(require("./routes/users.route"));
 const resto_route_1 = __importDefault(require("./routes/resto.route"));
-require('dotenv').config();
+const environment_1 = __importDefault(require("./utils/environment"));
 // init app/middleware
-const port = process.env.SERVER_PORT;
+const port = environment_1.default.SERVER_PORT;
 const app = (0, express_1.default)();
 // cookie Parser setup
 app.use((0, cookie_parser_1.default)());
 // Cors setup
 app.use((0, cors_1.default)({
-    origin: `http://localhost:${process.env.CLIENT_PORT}`,
+    origin: `http://localhost:${environment_1.default.CLIENT_PORT}`,
     credentials: true,
 }));
 // teeling express to use json
