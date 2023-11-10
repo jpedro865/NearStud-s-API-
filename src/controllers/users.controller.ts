@@ -89,7 +89,7 @@ export async function createUser(req: Request, res: Response) {
  * @param req 
  * @param res 
  */
-export async function connect_user(req: Request, res: Response) {
+export async function connect_user(req: Request, res: Response): Promise<void> {
   const identifier = req.body.identifier;
 
   // verification si identifier existe
@@ -105,6 +105,7 @@ export async function connect_user(req: Request, res: Response) {
     res.status(403).json({
       "error": "This identifier doesn't exist"
     });
+    return;
   }
   
   // si utilisateur existe
@@ -114,6 +115,7 @@ export async function connect_user(req: Request, res: Response) {
       res.status(403).json({
         "error": "This account is not verified"
       });
+      return;
     } else
     // si utilisateur est verifie
     {
@@ -133,10 +135,12 @@ export async function connect_user(req: Request, res: Response) {
         .status(200).json({
           "Message": "Logged in successfully",
         });
+        return;
       } else {
         res.status(403).json({
           "error": "Wrong password",
         });
+        return;
       }
     }
   } else
@@ -145,6 +149,7 @@ export async function connect_user(req: Request, res: Response) {
     res.status(403).json({
       "error": "This identifier doesn't exist"
     });
+    return;
   }
 }
 

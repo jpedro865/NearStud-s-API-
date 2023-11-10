@@ -126,6 +126,7 @@ function connect_user(req, res) {
             res.status(403).json({
                 "error": "This identifier doesn't exist"
             });
+            return;
         }
         // si utilisateur existe
         if (user) {
@@ -134,6 +135,7 @@ function connect_user(req, res) {
                 res.status(403).json({
                     "error": "This account is not verified"
                 });
+                return;
             }
             else 
             // si utilisateur est verifie
@@ -154,11 +156,13 @@ function connect_user(req, res) {
                         .status(200).json({
                         "Message": "Logged in successfully",
                     });
+                    return;
                 }
                 else {
                     res.status(403).json({
                         "error": "Wrong password",
                     });
+                    return;
                 }
             }
         }
@@ -168,6 +172,7 @@ function connect_user(req, res) {
             res.status(403).json({
                 "error": "This identifier doesn't exist"
             });
+            return;
         }
     });
 }
