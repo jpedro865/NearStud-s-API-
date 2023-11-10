@@ -41,7 +41,17 @@ export class Mailer {
       }
 
       // Envoi du mail
-      const sent = await transporteur.sendMail(emailOptions)
+      const sent = await new Promise((resolve, reject) => {
+          transporteur.sendMail(emailOptions, (err, info) => {
+            if (err) {
+              console.error(err);
+              reject(err);
+            } else {
+              console.log(info);
+              resolve(info);
+            }
+          });
+        })
         .then(() => {
           return true;
         })

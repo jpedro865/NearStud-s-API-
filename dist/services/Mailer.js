@@ -50,7 +50,18 @@ class Mailer {
                     html: compiledHtml
                 };
                 // Envoi du mail
-                const sent = yield transporteur.sendMail(emailOptions)
+                const sent = yield new Promise((resolve, reject) => {
+                    transporteur.sendMail(emailOptions, (err, info) => {
+                        if (err) {
+                            console.error(err);
+                            reject(err);
+                        }
+                        else {
+                            console.log(info);
+                            resolve(info);
+                        }
+                    });
+                })
                     .then(() => {
                     return true;
                 })
