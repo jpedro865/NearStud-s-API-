@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="Page validation" content="width=device-width, initial-scale=1.0">
+    <title>Page validation</title>
+  </head>
+  <body style="background-color: rgba(102, 102, 104, 0.438);">
+    <div class="d-flex justify-content-center align-items-center" style="height: 50vh;margin: 50px;">
+      <div class="card text-center flex-grow-1">
+        <div class="card-header bg-danger">
+          Validation de votre compte
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            Votre compte n'a pas pu être vérifié !
+          </h5>
+          <p class="card-text">
+            Une erreur s'est produite lors de la vérification de votre compte, veuillez réessayer plus tard.
+          </p>
+          <!-- <a href="javascript:window.open('','_self').close();" class="btn btn-success">Okay</a> -->
+        </div>
+      </div>
+    </div>
+    
+  </body>
+</html>
+
+<script>
+  function close_window() {
+    if (confirm("Close Window?")) {
+      close();
+    }
+  }
+</script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
