@@ -14,7 +14,7 @@ app.use(cookieParser());
 
 // Cors setup
 app.use(cors({
-  origin: `http://localhost:${env_vars.CLIENT_PORT}`,
+  origin: `*`,
   credentials: true,
 }));
 
