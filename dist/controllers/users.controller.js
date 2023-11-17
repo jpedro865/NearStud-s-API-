@@ -125,7 +125,7 @@ function connect_user(req, res) {
         }
         else {
             res.status(403).json({
-                "error": "This identifier doesn't exist"
+                "message": "This identifier doesn't exist"
             });
             return;
         }
@@ -134,7 +134,7 @@ function connect_user(req, res) {
             // si utilisateur n'est pas verifie
             if (!user.verified) {
                 res.status(403).json({
-                    "error": "This account is not verified"
+                    "message": "This account is not verified"
                 });
                 return;
             }
@@ -155,13 +155,13 @@ function connect_user(req, res) {
                         maxAge: 1000 * 3600 * 24,
                     })
                         .status(200).json({
-                        "Message": "Logged in successfully",
+                        "message": "Logged in successfully",
                     });
                     return;
                 }
                 else {
                     res.status(403).json({
-                        "error": "Wrong password",
+                        "message": "Wrong password",
                     });
                     return;
                 }
@@ -171,7 +171,7 @@ function connect_user(req, res) {
         // si utilisateur n'existe pas
         {
             res.status(403).json({
-                "error": "This identifier doesn't exist"
+                "message": "This identifier doesn't exist"
             });
             return;
         }
