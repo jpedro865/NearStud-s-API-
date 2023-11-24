@@ -125,7 +125,7 @@ function connect_user(req, res) {
         }
         else {
             res.status(403).json({
-                "message": "This identifier doesn't exist"
+                "message": "L'identifiant n'existe pas dans notre base"
             });
             return;
         }
@@ -134,7 +134,7 @@ function connect_user(req, res) {
             // si utilisateur n'est pas verifie
             if (!user.verified) {
                 res.status(403).json({
-                    "message": "This account is not verified"
+                    "message": "Ce compte n'est pas vérifier"
                 });
                 return;
             }
@@ -155,13 +155,13 @@ function connect_user(req, res) {
                         maxAge: 1000 * 3600 * 24,
                     })
                         .status(200).json({
-                        "message": "Logged in successfully",
+                        "message": "Connecté avec succés",
                     });
                     return;
                 }
                 else {
-                    res.status(403).json({
-                        "message": "Wrong password",
+                    res.status(401).json({
+                        "message": "Mauvais mot-de-passe",
                     });
                     return;
                 }
@@ -170,8 +170,8 @@ function connect_user(req, res) {
         else 
         // si utilisateur n'existe pas
         {
-            res.status(403).json({
-                "message": "This identifier doesn't exist"
+            res.status(400).json({
+                "message": "L'identifiant n'existe pas dans notre base"
             });
             return;
         }
@@ -189,7 +189,7 @@ function logout(req, res) {
         .clearCookie('access_token')
         .status(200)
         .json({
-        "message": "Logged out successfully",
+        "message": "Déconnecté avec succés",
     });
 }
 exports.logout = logout;

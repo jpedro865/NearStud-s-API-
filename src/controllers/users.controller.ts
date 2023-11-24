@@ -104,7 +104,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
     user = email;
   } else {
     res.status(403).json({
-      "message": "This identifier doesn't exist"
+      "message": "L'identifiant n'existe pas dans notre base"
     });
     return;
   }
@@ -114,7 +114,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
     // si utilisateur n'est pas verifie
     if (!user.verified) {
       res.status(403).json({
-        "message": "This account is not verified"
+        "message": "Ce compte n'est pas vérifier"
       });
       return;
     } else
@@ -134,12 +134,12 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
           maxAge: 1000 * 3600 * 24,
         })
         .status(200).json({
-          "message": "Logged in successfully",
+          "message": "Connecté avec succés",
         });
         return;
       } else {
-        res.status(403).json({
-          "message": "Wrong password",
+        res.status(401).json({
+          "message": "Mauvais mot-de-passe",
         });
         return;
       }
@@ -147,8 +147,8 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
   } else
   // si utilisateur n'existe pas
   {
-    res.status(403).json({
-      "message": "This identifier doesn't exist"
+    res.status(400).json({
+      "message": "L'identifiant n'existe pas dans notre base"
     });
     return;
   }
@@ -165,7 +165,7 @@ export function logout(req: Request, res: Response) {
     .clearCookie('access_token')
     .status(200)
     .json({
-      "message": "Logged out successfully",
+      "message": "Déconnecté avec succés",
     });
 }
 
