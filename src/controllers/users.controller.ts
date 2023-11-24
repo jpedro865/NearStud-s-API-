@@ -103,7 +103,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
   } else if (email) {
     user = email;
   } else {
-    res.status(403).json({
+    res.status(400).json({
       "message": "L'identifiant n'existe pas dans notre base"
     });
     return;

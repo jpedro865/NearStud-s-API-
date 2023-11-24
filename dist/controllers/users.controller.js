@@ -124,7 +124,7 @@ function connect_user(req, res) {
             user = email;
         }
         else {
-            res.status(403).json({
+            res.status(400).json({
                 "message": "L'identifiant n'existe pas dans notre base"
             });
             return;
