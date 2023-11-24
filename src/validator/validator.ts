@@ -12,9 +12,9 @@ export class Validator {
    * @param value 
    * @returns boolean
    */
-  public isEmpty(value: any) {
+  public isEmpty(value: any, message?: string) {
     if ( value == null || value == undefined || value == '' || value.length == 0) {
-      this.setError('This case is empty');
+      this.setError(message ?? 'This case is empty');
     }
   }
 

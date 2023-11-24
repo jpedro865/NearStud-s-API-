@@ -7,6 +7,7 @@ export interface User {
   pwd: string,
   admin: number,
   verified: boolean,
+  age: number,
   date_creation: Date,
   last_updated: Date,
 }

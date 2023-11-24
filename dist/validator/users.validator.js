@@ -14,6 +14,8 @@ const instance_1 = require("../database/instance");
 const validator_1 = require("./validator");
 class UserValidator extends validator_1.Validator {
     /**
+     * validateUserCreation
+     *
      * Verifies if the value passes to create the new User are valid
      * and verifies if no other user with same username or email already
      *  exists in the db
@@ -23,12 +25,14 @@ class UserValidator extends validator_1.Validator {
     validateUserCreation(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = req.body;
-            this.isEmpty(user.email);
-            this.isEmpty(user.firstname);
-            this.isEmpty(user.lastname);
-            this.isEmpty(user.username);
-            this.isEmpty(user.pwd);
+            this.isEmpty(user.email, "Email non renseigné");
+            this.isEmpty(user.firstname, "Prénom non renseigné");
+            this.isEmpty(user.lastname, "Nom non renseigné");
+            this.isEmpty(user.username, "Pseudo non renseigné");
+            this.isEmpty(user.pwd, "Mot de passe non renseigné");
             this.isMail(user.email);
+            this.isEmpty(user.age, 'Age non renseigné');
+            this.userIsAdult(user.age);
             if (this.isValid()) {
                 yield this.checkUserNameExists(user.username);
                 yield this.checkEmailExists(user.email);
@@ -70,6 +74,8 @@ class UserValidator extends validator_1.Validator {
      * already exists in the db
      *
      * @param username
+     *
+     * @return void
      */
     checkUserNameExists(username) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -91,6 +97,20 @@ class UserValidator extends validator_1.Validator {
                 this.setError('This E-mail already exists');
             }
         });
+    }
+    /**
+     * userIsAdult
+     *
+     * verifie l'age de l'utilisateur
+     *
+     * @param int age
+     *
+     * @return void
+     */
+    userIsAdult(age) {
+        if (age < 16) {
+            this.setError('Vous devez avoir au moins 16 ans pour vous inscrire');
+        }
     }
 }
 exports.UserValidator = UserValidator;

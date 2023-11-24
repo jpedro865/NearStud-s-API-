@@ -63,6 +63,9 @@ export async function createUser(req: Request, res: Response) {
   await validator.validateUserCreation(req);
 
   req.body.pwd = await crypt_pwd(req.body.pwd);
+  req.body.admin = req.body.admin ?? 0;
+  req.body.verified = req.body.verified ?? false;
+
   // inserting the user in the db if the data was validated
   if (validator.isValid()) {
     await db.collection('users')

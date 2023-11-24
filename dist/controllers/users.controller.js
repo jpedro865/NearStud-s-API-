@@ -77,10 +77,13 @@ exports.getById = getById;
  * @param res
  */
 function createUser(req, res) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const validator = new users_validator_1.UserValidator();
         yield validator.validateUserCreation(req);
         req.body.pwd = yield crypt_pwd(req.body.pwd);
+        req.body.admin = (_a = req.body.admin) !== null && _a !== void 0 ? _a : 0;
+        req.body.verified = (_b = req.body.verified) !== null && _b !== void 0 ? _b : false;
         // inserting the user in the db if the data was validated
         if (validator.isValid()) {
             yield instance_1.db.collection('users')
