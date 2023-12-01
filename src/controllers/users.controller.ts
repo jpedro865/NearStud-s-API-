@@ -182,19 +182,19 @@ export async function resendEmail(req: Request, res: Response) {
   const user = await db.collection('users').findOne({email: req.body.email})
 
   if (!user) {
-    res.status(403).json({
-      "error": "This email doesn't exist"
+    res.status(400).json({
+      "message": "This email doesn't exist"
     });
   } else if (user.verified) {
     res.status(403).json({
-      "error": "This account is already verified"
+      "message": "This account is already verified"
     });
   } else {
     const mailer = new Mailer();
     const sent = await mailer.email_verif_send(user._id.toString(), req.body.email);
     if (!sent.result) {
       res.status(500).json({
-        "error": sent.message
+        "message": sent.message
       });
     } else {
       res.status(200).json({

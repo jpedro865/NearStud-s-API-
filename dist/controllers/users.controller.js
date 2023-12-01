@@ -206,13 +206,13 @@ function resendEmail(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield instance_1.db.collection('users').findOne({ email: req.body.email });
         if (!user) {
-            res.status(403).json({
-                "error": "This email doesn't exist"
+            res.status(400).json({
+                "message": "This email doesn't exist"
             });
         }
         else if (user.verified) {
             res.status(403).json({
-                "error": "This account is already verified"
+                "message": "This account is already verified"
             });
         }
         else {
@@ -220,7 +220,7 @@ function resendEmail(req, res) {
             const sent = yield mailer.email_verif_send(user._id.toString(), req.body.email);
             if (!sent.result) {
                 res.status(500).json({
-                    "error": sent.message
+                    "message": sent.message
                 });
             }
             else {
