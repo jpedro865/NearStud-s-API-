@@ -21,6 +21,11 @@ app.use((0, cors_1.default)({
 }));
 // teeling express to use json
 app.use(express_1.default.json());
+app.use(function (req, res, next) {
+    res
+        .setHeader("Access-Control-Expose-Headers", "*");
+    next();
+});
 // routers here
 app.use('/users', users_route_1.default);
 app.use('/restos', resto_route_1.default);

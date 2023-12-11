@@ -21,6 +21,12 @@ app.use(cors({
 // teeling express to use json
 app.use(express.json());
 
+app.use(function(req, res, next) {
+  res
+    .setHeader("Access-Control-Expose-Headers", "*");
+
+  next();
+});
 
 // routers here
 app.use('/users', UserRouter);

@@ -127,11 +127,17 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
       if (result) {
         const token = jsonwebtoken.sign({
           "_id": user._id,
+          "email": user.email,
+          "firstname": user.firstname,
+          "lastname": user.lastname,
+          "username": user.username,
+          "age": user.age,
           "admin": user.admin,
         }, env_vars.SECRET_KEY, {
           expiresIn: "24h",
         });
         res
+        .setHeader("access_token", token)
         .cookie('access_token', token, {
           httpOnly: true,
           maxAge: 1000 * 3600 * 24,

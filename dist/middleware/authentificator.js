@@ -12,7 +12,7 @@ function auth(req, res, next) {
     // verification of the existence of the token
     if (!token) {
         res.status(403).json({
-            message: 'No token found',
+            message: 'token manquant',
         });
     }
     else {

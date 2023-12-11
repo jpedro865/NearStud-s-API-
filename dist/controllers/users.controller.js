@@ -148,11 +148,17 @@ function connect_user(req, res) {
                 if (result) {
                     const token = jsonwebtoken_1.default.sign({
                         "_id": user._id,
+                        "email": user.email,
+                        "firstname": user.firstname,
+                        "lastname": user.lastname,
+                        "username": user.username,
+                        "age": user.age,
                         "admin": user.admin,
                     }, environment_1.default.SECRET_KEY, {
                         expiresIn: "24h",
                     });
                     res
+                        .setHeader("access_token", token)
                         .cookie('access_token', token, {
                         httpOnly: true,
                         maxAge: 1000 * 3600 * 24,

@@ -9,7 +9,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
   // verification of the existence of the token
   if (!token) {
     res.status(403).json({
-      message: 'No token found',
+      message: 'token manquant',
     });
   } else {
     // verification of the validity of the token thanks to the public key
