@@ -1,7 +1,7 @@
 export interface Resto {
   _id: string,
   nom: string,
-  coord: [number, number],
+  coord: Coord,
   adresse: Adresse,
   cuisine: string[]
 }
@@ -14,6 +14,6 @@ interface Adresse {
 }
 
 interface Coord {
-  latitude: number,
-  longitude: number
+  lat: number, // latitude
+  lng: number // longitude
 }
