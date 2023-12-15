@@ -21,7 +21,7 @@ export async function createResto(req: Request, res: Response) {
       })
       .catch(e => {
         res.status(500).json({
-          "ERREUR_SERVER": e
+          "message": e
         });
       })
   } else {
@@ -67,7 +67,7 @@ export async function getAllResto(req: Request, res: Response) {
     })
     .catch(e => {
       res.status(500).json({
-        "ERREUR_SERVER": e
+        "message": e
       });
     });
 }
