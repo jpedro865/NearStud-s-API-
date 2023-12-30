@@ -126,13 +126,13 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
       const result = await compare_hash(req.body.pwd, user.pwd);
       if (result) {
         const token = jsonwebtoken.sign({
-          "_id": user._id,
-          "email": user.email,
-          "firstname": user.firstname,
-          "lastname": user.lastname,
-          "username": user.username,
-          "age": user.age,
-          "admin": user.admin,
+          "_id": user._id ?? "",
+          "email": user.email ?? "",
+          "firstname": user.firstname ?? "",
+          "lastname": user.lastname ?? "",
+          "username": user.username ?? "",
+          "age": user.age ?? "0",
+          "admin": user.admin ?? false,
         }, env_vars.SECRET_KEY, {
           expiresIn: "24h",
         });
