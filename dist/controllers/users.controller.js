@@ -84,6 +84,7 @@ function createUser(req, res) {
         req.body.pwd = yield crypt_pwd(req.body.pwd);
         req.body.admin = (_a = req.body.admin) !== null && _a !== void 0 ? _a : 0;
         req.body.verified = (_b = req.body.verified) !== null && _b !== void 0 ? _b : false;
+        req.body.age = req.body.age ? req.body.age : 0;
         // inserting the user in the db if the data was validated
         if (validator.isValid()) {
             yield instance_1.db.collection('users')
@@ -153,8 +154,8 @@ function connect_user(req, res) {
                         "firstname": (_c = user.firstname) !== null && _c !== void 0 ? _c : "",
                         "lastname": (_d = user.lastname) !== null && _d !== void 0 ? _d : "",
                         "username": (_e = user.username) !== null && _e !== void 0 ? _e : "",
-                        "age": (_f = user.age) !== null && _f !== void 0 ? _f : "0",
-                        "admin": (_g = user.admin) !== null && _g !== void 0 ? _g : false,
+                        "age": (_f = user.age) !== null && _f !== void 0 ? _f : 0,
+                        "admin": (_g = user.admin) !== null && _g !== void 0 ? _g : 0,
                     }, environment_1.default.SECRET_KEY, {
                         expiresIn: "24h",
                     });
