@@ -84,6 +84,7 @@ function createUser(req, res) {
         req.body.pwd = yield crypt_pwd(req.body.pwd);
         req.body.admin = (_a = req.body.admin) !== null && _a !== void 0 ? _a : 0;
         req.body.verified = (_b = req.body.verified) !== null && _b !== void 0 ? _b : false;
+        req.body.age = req.body.age ? req.body.age : 0;
         // inserting the user in the db if the data was validated
         if (validator.isValid()) {
             yield instance_1.db.collection('users')
@@ -114,6 +115,7 @@ exports.createUser = createUser;
  * @param res
  */
 function connect_user(req, res) {
+    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function* () {
         const identifier = req.body.identifier;
         // verification si identifier existe
@@ -147,13 +149,13 @@ function connect_user(req, res) {
                 const result = yield compare_hash(req.body.pwd, user.pwd);
                 if (result) {
                     const token = jsonwebtoken_1.default.sign({
-                        "_id": user._id,
-                        "email": user.email,
-                        "firstname": user.firstname,
-                        "lastname": user.lastname,
-                        "username": user.username,
-                        "age": user.age,
-                        "admin": user.admin,
+                        "_id": (_a = user._id) !== null && _a !== void 0 ? _a : "",
+                        "email": (_b = user.email) !== null && _b !== void 0 ? _b : "",
+                        "firstname": (_c = user.firstname) !== null && _c !== void 0 ? _c : "",
+                        "lastname": (_d = user.lastname) !== null && _d !== void 0 ? _d : "",
+                        "username": (_e = user.username) !== null && _e !== void 0 ? _e : "",
+                        "age": (_f = user.age) !== null && _f !== void 0 ? _f : 0,
+                        "admin": (_g = user.admin) !== null && _g !== void 0 ? _g : 0,
                     }, environment_1.default.SECRET_KEY, {
                         expiresIn: "24h",
                     });

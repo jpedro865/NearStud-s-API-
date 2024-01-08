@@ -65,6 +65,7 @@ export async function createUser(req: Request, res: Response) {
   req.body.pwd = await crypt_pwd(req.body.pwd);
   req.body.admin = req.body.admin ?? 0;
   req.body.verified = req.body.verified ?? false;
+  req.body.age = req.body.age ? req.body.age as number : 0;
 
   // inserting the user in the db if the data was validated
   if (validator.isValid()) {
@@ -126,13 +127,13 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
       const result = await compare_hash(req.body.pwd, user.pwd);
       if (result) {
         const token = jsonwebtoken.sign({
-          "_id": user._id,
-          "email": user.email,
-          "firstname": user.firstname,
-          "lastname": user.lastname,
-          "username": user.username,
-          "age": user.age,
-          "admin": user.admin,
+          "_id": user._id ?? "",
+          "email": user.email ?? "",
+          "firstname": user.firstname ?? "",
+          "lastname": user.lastname ?? "",
+          "username": user.username ?? "",
+          "age": user.age ?? 0,
+          "admin": user.admin ?? 0,
         }, env_vars.SECRET_KEY, {
           expiresIn: "24h",
         });

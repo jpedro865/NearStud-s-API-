@@ -31,7 +31,7 @@ function createResto(req, res) {
             })
                 .catch(e => {
                 res.status(500).json({
-                    "ERREUR_SERVER": e
+                    "message": e
                 });
             });
         }
@@ -81,7 +81,7 @@ function getAllResto(req, res) {
         })
             .catch(e => {
             res.status(500).json({
-                "ERREUR_SERVER": e
+                "message": e
             });
         });
     });
