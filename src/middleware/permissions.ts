@@ -3,6 +3,7 @@ import jsonwebtoken from 'jsonwebtoken';
 
 export function hasRigths(req: Request, res: Response, next: NextFunction) {
   const tokenData: any = jsonwebtoken.decode(req.cookies.access_token);
+  console.log(tokenData, req.params.id);
 
   if (req.params.id === tokenData?._id || tokenData?.admin === 1) {
     next();

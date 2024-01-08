@@ -18,6 +18,12 @@ const tokens_service_1 = require("../services/tokens.service");
 const users_services_1 = require("../services/users.services");
 const environment_1 = __importDefault(require("../utils/environment"));
 const path_1 = require("path");
+/**
+ * Valide le token d'un utilisateur utilise pour valider son email
+ *
+ * @param req
+ * @param res
+ */
 function valid_email_token(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         // gestion du template html

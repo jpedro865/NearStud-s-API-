@@ -9,6 +9,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const users_route_1 = __importDefault(require("./routes/users.route"));
 const resto_route_1 = __importDefault(require("./routes/resto.route"));
 const environment_1 = __importDefault(require("./utils/environment"));
+const favoris_route_1 = __importDefault(require("./routes/favoris.route"));
 // init app/middleware
 const port = environment_1.default.SERVER_PORT;
 const app = (0, express_1.default)();
@@ -29,6 +30,7 @@ app.use(function (req, res, next) {
 // routers here
 app.use('/users', users_route_1.default);
 app.use('/restos', resto_route_1.default);
+app.use('/favoris', favoris_route_1.default);
 app.get('/', (req, res) => {
     res.status(200).json({
         "this": "NearStud's APi",

@@ -5,6 +5,12 @@ import { verifyUser } from "../services/users.services";
 import env_vars from "../utils/environment";
 import { join } from "path";
 
+/**
+ * Valide le token d'un utilisateur utilise pour valider son email
+ * 
+ * @param req 
+ * @param res 
+ */
 export async function valid_email_token(req: Request, res: Response) {
   // gestion du template html
   const erreur_page = join(__dirname, "../../public/html/validation_fail.html");

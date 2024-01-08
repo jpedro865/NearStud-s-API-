@@ -263,6 +263,14 @@ export async function updateUser(req: Request, res: Response) {
   }
 }
 
+/**
+ * addFields
+ * 
+ * ajouter des champs a tous les utilisateurs
+ * 
+ * @param req 
+ * @param res 
+ */
 export async function addFields(req: Request, res: Response) {
   const fields_name = JSON.stringify(req.body).match(/"([^"]*)"/g).join().replace(/"/g, '').split(',');
 
@@ -291,6 +299,14 @@ export async function addFields(req: Request, res: Response) {
     });
 }
 
+/**
+ * deleteFields
+ * 
+ * supprimer des champs a tous les utilisateurs
+ * 
+ * @param req 
+ * @param res 
+ */
 export async function deleteFields(req: Request, res: Response) {  
   await db.collection('users')
     .updateMany({email: {$exists: true}},

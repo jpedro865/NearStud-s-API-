@@ -290,6 +290,14 @@ function updateUser(req, res) {
     });
 }
 exports.updateUser = updateUser;
+/**
+ * addFields
+ *
+ * ajouter des champs a tous les utilisateurs
+ *
+ * @param req
+ * @param res
+ */
 function addFields(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const fields_name = JSON.stringify(req.body).match(/"([^"]*)"/g).join().replace(/"/g, '').split(',');
@@ -315,6 +323,14 @@ function addFields(req, res) {
     });
 }
 exports.addFields = addFields;
+/**
+ * deleteFields
+ *
+ * supprimer des champs a tous les utilisateurs
+ *
+ * @param req
+ * @param res
+ */
 function deleteFields(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         yield instance_1.db.collection('users')

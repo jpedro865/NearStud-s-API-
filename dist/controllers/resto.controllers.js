@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
+exports.getRestoFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
 const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 const resto_validator_1 = require("../validator/resto.validator");
@@ -87,4 +87,29 @@ function getAllResto(req, res) {
     });
 }
 exports.getAllResto = getAllResto;
+/**
+ * updateResto
+ *
+ * @param req
+ * @param res
+ */
+function getRestoFavoris(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const favoris = req.body.favoris;
+        var restoFavoris = [];
+        for (const id_resto of favoris) {
+            yield instance_1.db.collection('restaurants')
+                .findOne({ _id: new mongodb_1.ObjectId(id_resto) })
+                .then(data => {
+                restoFavoris.push(data);
+            })
+                .catch(e => {
+                res.status(500).json({
+                    "ERREUR_SERVER": e
+                });
+            });
+        }
+    });
+}
+exports.getRestoFavoris = getRestoFavoris;
 //# sourceMappingURL=resto.controllers.js.map

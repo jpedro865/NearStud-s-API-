@@ -71,3 +71,28 @@ export async function getAllResto(req: Request, res: Response) {
       });
     });
 }
+
+/**
+ * updateResto
+ * 
+ * @param req 
+ * @param res 
+ */
+export async function getRestoFavoris(req: Request, res: Response) {
+  const favoris: string[] = req.body.favoris as string[];
+
+  var restoFavoris: any[] = [];
+
+  for (const id_resto of favoris) {
+    await db.collection('restaurants')
+      .findOne({_id: new ObjectId(id_resto)})
+      .then(data => {
+        restoFavoris.push(data);
+      })
+      .catch(e => {
+        res.status(500).json({
+          "ERREUR_SERVER": e
+        });
+      });
+  }
+}

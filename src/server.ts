@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import UserRouter from './routes/users.route';
 import restoRouter from './routes/resto.route';
 import env_vars from './utils/environment';
+import favorisRouter from './routes/favoris.route';
 
 // init app/middleware
 const port = env_vars.SERVER_PORT;
@@ -31,6 +32,7 @@ app.use(function(req, res, next) {
 // routers here
 app.use('/users', UserRouter);
 app.use('/restos', restoRouter)
+app.use('/favoris', favorisRouter)
 
 app.get('/', ( req: Request, res: Response) => {
   res.status(200).json({
