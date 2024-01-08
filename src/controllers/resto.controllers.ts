@@ -78,21 +78,25 @@ export async function getAllResto(req: Request, res: Response) {
  * @param req 
  * @param res 
  */
-export async function getRestoFavoris(req: Request, res: Response) {
-  const favoris: string[] = req.body.favoris as string[];
-
-  var restoFavoris: any[] = [];
-
-  for (const id_resto of favoris) {
-    await db.collection('restaurants')
-      .findOne({_id: new ObjectId(id_resto)})
-      .then(data => {
-        restoFavoris.push(data);
-      })
-      .catch(e => {
-        res.status(500).json({
-          "ERREUR_SERVER": e
-        });
-      });
+export async function getRestosFavoris(req: Request, res: Response) {
+  const favoris_string: string[] = req.body.favoris as string[];
+  var favoris: ObjectId[] = [];
+  
+  // Convertir les string en ObjectId
+  // necessaire pour la requete
+  for (var i = 0; i < favoris_string.length; i++) {
+    favoris[i] = new ObjectId(favoris_string[i]);
   }
+
+  await db.collection('restaurants')
+    .find({_id: {$in: favoris}})
+    .toArray()
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => {
+      res.status(500).json({
+        "message": e
+      });
+    });
 }

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRestoFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
+exports.getRestosFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
 const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 const resto_validator_1 = require("../validator/resto.validator");
@@ -93,23 +93,27 @@ exports.getAllResto = getAllResto;
  * @param req
  * @param res
  */
-function getRestoFavoris(req, res) {
+function getRestosFavoris(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const favoris = req.body.favoris;
-        var restoFavoris = [];
-        for (const id_resto of favoris) {
-            yield instance_1.db.collection('restaurants')
-                .findOne({ _id: new mongodb_1.ObjectId(id_resto) })
-                .then(data => {
-                restoFavoris.push(data);
-            })
-                .catch(e => {
-                res.status(500).json({
-                    "ERREUR_SERVER": e
-                });
-            });
+        const favoris_string = req.body.favoris;
+        var favoris = [];
+        // Convertir les string en ObjectId
+        // necessaire pour la requete
+        for (var i = 0; i < favoris_string.length; i++) {
+            favoris[i] = new mongodb_1.ObjectId(favoris_string[i]);
         }
+        yield instance_1.db.collection('restaurants')
+            .find({ _id: { $in: favoris } })
+            .toArray()
+            .then(data => {
+            res.status(200).json(data);
+        })
+            .catch(e => {
+            res.status(500).json({
+                "message": e
+            });
+        });
     });
 }
-exports.getRestoFavoris = getRestoFavoris;
+exports.getRestosFavoris = getRestosFavoris;
 //# sourceMappingURL=resto.controllers.js.map
