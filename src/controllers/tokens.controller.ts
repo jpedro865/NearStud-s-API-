@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
-import { findByUserId, setUsedToken, verifyRefreshToken } from "../services/tokens.service";
+import { addRefreshToken, findByUserId, setUsedToken, verifyRefreshToken } from "../services/tokens.service";
 import { getUserById, verifyUser } from "../services/users.services";
 import env_vars from "../utils/environment";
 import { join } from "path";
@@ -63,6 +63,7 @@ export async function refresh_token(req: Request, res: Response) {
           res.status(403).json({
             message: `Desole, une erreur est survenu: ${err}`,
           });
+          return;
         } else if (await verifyRefreshToken(data._id, token)) {
           const user = await verifyUser(data._id)? await getUserById(data._id): null;
 
@@ -92,34 +93,28 @@ export async function refresh_token(req: Request, res: Response) {
               }
             );
 
-            res.status(200)
-            .cookie('access_token', access_token, {
-              httpOnly: true,
-              maxAge: 1000 * 60 * 15, // 15 minutes
-            })
-            .cookie('refresh_token', refresh_token, {
-              path: '/refresh',
-              httpOnly: true,
-              maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
-            })
-            .json({
-            message: "Token rafraichit",
-            });
-          } else {
-            res.status(403).json({
-              message: `Desole, une erreur est survenu`,
-            });
+            if (await addRefreshToken(user._id.toString(), refresh_token)) {
+              res.status(200)
+                .cookie('access_token', access_token, {
+                  httpOnly: true,
+                  maxAge: 1000 * 60 * 15, // 15 minutes
+                })
+                .cookie('refresh_token', refresh_token, {
+                  path: '/refresh',
+                  httpOnly: true,
+                  maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
+                })
+                .json({
+                message: "Token rafraichit",
+                });
+              return;
+            }
           }
-        } else {
-          res.status(403).json({
-            message: `Desole, une erreur est survenu`,
-          });
         }
       }
     );
-  } else {
-    res.status(403).json({
-      message: `Desole, une erreur est survenu`,
-    });
   }
+  res.status(403).json({
+    message: `Desole, une erreur est survenu`,
+  });
 }

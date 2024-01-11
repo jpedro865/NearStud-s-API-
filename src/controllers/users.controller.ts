@@ -6,6 +6,7 @@ import { db } from '../database/instance';
 import jsonwebtoken from 'jsonwebtoken';
 import { Mailer } from '../services/Mailer';
 import env_vars from '../utils/environment';
+import { addRefreshToken } from '../services/tokens.service';
 
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -137,15 +138,37 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
         }, env_vars.SECRET_KEY, {
           expiresIn: "24h",
         });
-        res
-        .cookie('access_token', token, {
-          httpOnly: true,
-          maxAge: 1000 * 3600 * 24,
-        })
-        .status(200).json({
-          "message": "Connecté avec succés",
-        });
-        return;
+        const refresh_token = jsonwebtoken.sign(
+          {
+            "_id": user._id,
+          },
+          env_vars.KEY_TOKEN_REFRESH,
+          {
+            expiresIn: "90 days",
+          }
+        );
+        if (addRefreshToken(user._id.toString(), refresh_token)) {
+          res
+          .cookie('access_token', token, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 15, // 15 minutes
+          })
+          .cookie('refresh_token', refresh_token, {
+            path: '/refresh',
+            httpOnly: true,
+            maxAge: 1000 * 3600 * 24 * 90, // 90 days
+          })
+          .status(200).json({
+            "message": "Connecté avec succés",
+          });
+          return;
+        } else {
+          res.status(500).json({
+            "message": "Une erreur est survenu",
+          });
+          return;
+        }
+        
       } else {
         res.status(401).json({
           "message": "Mauvais mot-de-passe",

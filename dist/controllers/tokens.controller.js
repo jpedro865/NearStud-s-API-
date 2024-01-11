@@ -72,6 +72,7 @@ function refresh_token(req, res) {
                     res.status(403).json({
                         message: `Desole, une erreur est survenu: ${err}`,
                     });
+                    return;
                 }
                 else if (yield (0, tokens_service_1.verifyRefreshToken)(data._id, token)) {
                     const user = (yield (0, users_services_1.verifyUser)(data._id)) ? yield (0, users_services_1.getUserById)(data._id) : null;
@@ -92,38 +93,29 @@ function refresh_token(req, res) {
                         }, environment_1.default.KEY_TOKEN_REFRESH, {
                             expiresIn: "90 days",
                         });
-                        res.status(200)
-                            .cookie('access_token', access_token, {
-                            httpOnly: true,
-                            maxAge: 1000 * 60 * 15, // 15 minutes
-                        })
-                            .cookie('refresh_token', refresh_token, {
-                            path: '/refresh',
-                            httpOnly: true,
-                            maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
-                        })
-                            .json({
-                            message: "Token rafraichit",
-                        });
+                        if (yield (0, tokens_service_1.addRefreshToken)(user._id.toString(), refresh_token)) {
+                            res.status(200)
+                                .cookie('access_token', access_token, {
+                                httpOnly: true,
+                                maxAge: 1000 * 60 * 15, // 15 minutes
+                            })
+                                .cookie('refresh_token', refresh_token, {
+                                path: '/refresh',
+                                httpOnly: true,
+                                maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
+                            })
+                                .json({
+                                message: "Token rafraichit",
+                            });
+                            return;
+                        }
                     }
-                    else {
-                        res.status(403).json({
-                            message: `Desole, une erreur est survenu`,
-                        });
-                    }
-                }
-                else {
-                    res.status(403).json({
-                        message: `Desole, une erreur est survenu`,
-                    });
                 }
             }));
         }
-        else {
-            res.status(403).json({
-                message: `Desole, une erreur est survenu`,
-            });
-        }
+        res.status(403).json({
+            message: `Desole, une erreur est survenu`,
+        });
     });
 }
 exports.refresh_token = refresh_token;

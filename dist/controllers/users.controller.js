@@ -20,6 +20,7 @@ const instance_1 = require("../database/instance");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Mailer_1 = require("../services/Mailer");
 const environment_1 = __importDefault(require("../utils/environment"));
+const tokens_service_1 = require("../services/tokens.service");
 /**
  * Controller pour rechercher tous les utilisateurs
  *
@@ -159,15 +160,33 @@ function connect_user(req, res) {
                     }, environment_1.default.SECRET_KEY, {
                         expiresIn: "24h",
                     });
-                    res
-                        .cookie('access_token', token, {
-                        httpOnly: true,
-                        maxAge: 1000 * 3600 * 24,
-                    })
-                        .status(200).json({
-                        "message": "Connecté avec succés",
+                    const refresh_token = jsonwebtoken_1.default.sign({
+                        "_id": user._id,
+                    }, environment_1.default.KEY_TOKEN_REFRESH, {
+                        expiresIn: "90 days",
                     });
-                    return;
+                    if ((0, tokens_service_1.addRefreshToken)(user._id.toString(), refresh_token)) {
+                        res
+                            .cookie('access_token', token, {
+                            httpOnly: true,
+                            maxAge: 1000 * 60 * 15, // 15 minutes
+                        })
+                            .cookie('refresh_token', refresh_token, {
+                            path: '/refresh',
+                            httpOnly: true,
+                            maxAge: 1000 * 3600 * 24 * 90, // 90 days
+                        })
+                            .status(200).json({
+                            "message": "Connecté avec succés",
+                        });
+                        return;
+                    }
+                    else {
+                        res.status(500).json({
+                            "message": "Une erreur est survenu",
+                        });
+                        return;
+                    }
                 }
                 else {
                     res.status(401).json({
