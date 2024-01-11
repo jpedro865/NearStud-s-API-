@@ -138,7 +138,7 @@ function connect_user(req, res) {
         if (user) {
             // si utilisateur n'est pas verifie
             if (!user.verified) {
-                res.status(403).json({
+                res.status(401).json({
                     "message": "Ce compte n'est pas vérifier"
                 });
                 return;
@@ -160,7 +160,6 @@ function connect_user(req, res) {
                         expiresIn: "24h",
                     });
                     res
-                        .setHeader("access_token", token)
                         .cookie('access_token', token, {
                         httpOnly: true,
                         maxAge: 1000 * 3600 * 24,
@@ -219,7 +218,7 @@ function resendEmail(req, res) {
             });
         }
         else if (user.verified) {
-            res.status(403).json({
+            res.status(401).json({
                 "message": "This account is already verified"
             });
         }

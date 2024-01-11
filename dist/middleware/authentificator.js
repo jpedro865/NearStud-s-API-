@@ -24,6 +24,7 @@ function auth(req, res, next) {
                 });
             }
             else {
+                console.log('ok');
                 next();
             }
         });

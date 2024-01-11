@@ -12,7 +12,7 @@ function hasRigths(req, res, next) {
         next();
     }
     else {
-        res.status(403).json({
+        res.status(401).json({
             message: "Vous n'avez pas les droits pour effectuer cette action",
         });
     }

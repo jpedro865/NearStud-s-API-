@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.valid_email_token = void 0;
+exports.refresh_token = exports.valid_email_token = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const tokens_service_1 = require("../services/tokens.service");
 const users_services_1 = require("../services/users.services");
@@ -55,4 +55,76 @@ function valid_email_token(req, res) {
     });
 }
 exports.valid_email_token = valid_email_token;
+/**
+ * Controller pour rafraichir le token
+ *
+ * @param req
+ * @param res
+ */
+function refresh_token(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Vérification du token
+        const token = req.cookies.refresh_token;
+        if (token) {
+            jsonwebtoken_1.default.verify(token, environment_1.default.KEY_TOKEN_REFRESH, (err, data) => __awaiter(this, void 0, void 0, function* () {
+                var _a, _b, _c, _d, _e, _f, _g;
+                if (err) {
+                    res.status(403).json({
+                        message: `Desole, une erreur est survenu: ${err}`,
+                    });
+                }
+                else if (yield (0, tokens_service_1.verifyRefreshToken)(data._id, token)) {
+                    const user = (yield (0, users_services_1.verifyUser)(data._id)) ? yield (0, users_services_1.getUserById)(data._id) : null;
+                    if (user) {
+                        const access_token = jsonwebtoken_1.default.sign({
+                            "_id": (_a = user._id) !== null && _a !== void 0 ? _a : "",
+                            "email": (_b = user.email) !== null && _b !== void 0 ? _b : "",
+                            "firstname": (_c = user.firstname) !== null && _c !== void 0 ? _c : "",
+                            "lastname": (_d = user.lastname) !== null && _d !== void 0 ? _d : "",
+                            "username": (_e = user.username) !== null && _e !== void 0 ? _e : "",
+                            "age": (_f = user.age) !== null && _f !== void 0 ? _f : 0,
+                            "admin": (_g = user.admin) !== null && _g !== void 0 ? _g : 0,
+                        }, environment_1.default.KEY_TOKEN, {
+                            expiresIn: 60 * 15, // 15 minutes
+                        });
+                        const refresh_token = jsonwebtoken_1.default.sign({
+                            "_id": user._id,
+                        }, environment_1.default.KEY_TOKEN_REFRESH, {
+                            expiresIn: "90 days",
+                        });
+                        res.status(200)
+                            .cookie('access_token', access_token, {
+                            httpOnly: true,
+                            maxAge: 1000 * 60 * 15, // 15 minutes
+                        })
+                            .cookie('refresh_token', refresh_token, {
+                            path: '/refresh',
+                            httpOnly: true,
+                            maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
+                        })
+                            .json({
+                            message: "Token rafraichit",
+                        });
+                    }
+                    else {
+                        res.status(403).json({
+                            message: `Desole, une erreur est survenu`,
+                        });
+                    }
+                }
+                else {
+                    res.status(403).json({
+                        message: `Desole, une erreur est survenu`,
+                    });
+                }
+            }));
+        }
+        else {
+            res.status(403).json({
+                message: `Desole, une erreur est survenu`,
+            });
+        }
+    });
+}
+exports.refresh_token = refresh_token;
 //# sourceMappingURL=tokens.controller.js.map

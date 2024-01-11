@@ -21,6 +21,7 @@ const env_vars = {
   BASE_URL: getBaseUrl(),
   SECRET_KEY: process.env.SECRET_KEy || 'secret',
   KEY_TOKEN: process.env.KEY_TOKEN || 'token',
+  KEY_TOKEN_REFRESH: process.env.KEY_TOKEN_REFRESH || 'token_refresh',
   EMAIL: process.env.EMAIL || 'nearstuds@zohomail.eu',
   E_PASS: process.env.E_PASS || 'nearstuds',
   MAIL_SERVICE: process.env.MAIL_SERVICE || 'smtp.zoho.eu',

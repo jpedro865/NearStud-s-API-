@@ -117,7 +117,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
   if (user) {
     // si utilisateur n'est pas verifie
     if (!user.verified) {
-      res.status(403).json({
+      res.status(401).json({
         "message": "Ce compte n'est pas vérifier"
       });
       return;
@@ -138,7 +138,6 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
           expiresIn: "24h",
         });
         res
-        .setHeader("access_token", token)
         .cookie('access_token', token, {
           httpOnly: true,
           maxAge: 1000 * 3600 * 24,
@@ -193,7 +192,7 @@ export async function resendEmail(req: Request, res: Response) {
       "message": "This email doesn't exist"
     });
   } else if (user.verified) {
-    res.status(403).json({
+    res.status(401).json({
       "message": "This account is already verified"
     });
   } else {

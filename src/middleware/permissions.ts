@@ -8,7 +8,7 @@ export function hasRigths(req: Request, res: Response, next: NextFunction) {
   if (req.params.id === tokenData?._id || tokenData?.admin === 1) {
     next();
   } else {
-    res.status(403).json({
+    res.status(401).json({
       message: "Vous n'avez pas les droits pour effectuer cette action",
     });
   }
