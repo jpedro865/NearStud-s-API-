@@ -69,7 +69,10 @@ function refresh_token(req, res) {
             jsonwebtoken_1.default.verify(token, environment_1.default.KEY_TOKEN_REFRESH, (err, data) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b, _c, _d, _e, _f, _g;
                 if (err) {
-                    res.status(403).json({
+                    res
+                        .clearCookie('access_token')
+                        .clearCookie('refresh_token')
+                        .status(403).json({
                         message: `Desole, une erreur est survenu: ${err}`,
                     });
                     return;
@@ -113,7 +116,10 @@ function refresh_token(req, res) {
                             return;
                         }
                         else {
-                            res.status(403).json({
+                            res
+                                .clearCookie('access_token')
+                                .clearCookie('refresh_token')
+                                .status(403).json({
                                 message: `Desole, une erreur est survenu : refresh token not created`,
                             });
                             return;
@@ -121,7 +127,10 @@ function refresh_token(req, res) {
                     }
                 }
                 else {
-                    res.status(403).json({
+                    res
+                        .clearCookie('access_token')
+                        .clearCookie('refresh_token')
+                        .status(403).json({
                         message: `Desole, une erreur est survenu : refresh token not valid`,
                     });
                     return;
@@ -129,7 +138,10 @@ function refresh_token(req, res) {
             }));
         }
         else {
-            res.status(403).json({
+            res
+                .clearCookie('access_token')
+                .clearCookie('refresh_token')
+                .status(403).json({
                 message: `Desole, une erreur est survenu : refresh token not found`,
             });
             return;

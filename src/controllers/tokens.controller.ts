@@ -60,9 +60,12 @@ export async function refresh_token(req: Request, res: Response) {
       env_vars.KEY_TOKEN_REFRESH,
       async (err: any, data: any) => {
         if (err) {
-          res.status(403).json({
-            message: `Desole, une erreur est survenu: ${err}`,
-          });
+          res
+            .clearCookie('access_token')
+            .clearCookie('refresh_token')
+            .status(403).json({
+              message: `Desole, une erreur est survenu: ${err}`,
+            });
           return;
         } else if (await verifyRefreshToken(data._id, token)) {
           var user = null;
@@ -111,24 +114,33 @@ export async function refresh_token(req: Request, res: Response) {
                 });
               return;
             } else {
-              res.status(403).json({
-                message: `Desole, une erreur est survenu : refresh token not created`,
-              });
+              res
+                .clearCookie('access_token')
+                .clearCookie('refresh_token')
+                .status(403).json({
+                  message: `Desole, une erreur est survenu : refresh token not created`,
+                });
               return;
             }
           }
         } else {
-          res.status(403).json({
-            message: `Desole, une erreur est survenu : refresh token not valid`,
-          });
+          res
+            .clearCookie('access_token')
+            .clearCookie('refresh_token')
+            .status(403).json({
+              message: `Desole, une erreur est survenu : refresh token not valid`,
+           });
           return;
         }
       }
     );
   } else {
-    res.status(403).json({
-      message: `Desole, une erreur est survenu : refresh token not found`,
-    });
+    res
+      .clearCookie('access_token')
+      .clearCookie('refresh_token')
+      .status(403).json({
+        message: `Desole, une erreur est survenu : refresh token not found`,
+      });
     return;
   }
 }
