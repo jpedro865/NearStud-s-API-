@@ -14,7 +14,7 @@ const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 function getUserById(user_id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const user = yield instance_1.db.collection('user').findOne({ _id: new mongodb_1.ObjectId(user_id) });
+        const user = yield instance_1.db.collection('users').findOne({ _id: new mongodb_1.ObjectId(user_id) });
         return user;
     });
 }

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
 import { addRefreshToken, findByUserId, setUsedToken, verifyRefreshToken } from "../services/tokens.service";
 import { getUserById, verifyUser } from "../services/users.services";
@@ -65,8 +65,10 @@ export async function refresh_token(req: Request, res: Response) {
           });
           return;
         } else if (await verifyRefreshToken(data._id, token)) {
-          const user = await verifyUser(data._id)? await getUserById(data._id): null;
-
+          var user = null;
+          if (await verifyUser(data._id)) {
+            user = await getUserById(data._id);
+          }
           if (user) {
             const access_token = jsonwebtoken.sign(
               {
@@ -94,7 +96,7 @@ export async function refresh_token(req: Request, res: Response) {
             );
 
             if (await addRefreshToken(user._id.toString(), refresh_token)) {
-              res.status(200)
+              res
                 .cookie('access_token', access_token, {
                   httpOnly: true,
                   maxAge: 1000 * 60 * 15, // 15 minutes
@@ -104,17 +106,29 @@ export async function refresh_token(req: Request, res: Response) {
                   httpOnly: true,
                   maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
                 })
-                .json({
+                .status(200).json({
                 message: "Token rafraichit",
                 });
               return;
+            } else {
+              res.status(403).json({
+                message: `Desole, une erreur est survenu : refresh token not created`,
+              });
+              return;
             }
           }
+        } else {
+          res.status(403).json({
+            message: `Desole, une erreur est survenu : refresh token not valid`,
+          });
+          return;
         }
       }
     );
+  } else {
+    res.status(403).json({
+      message: `Desole, une erreur est survenu : refresh token not found`,
+    });
+    return;
   }
-  res.status(403).json({
-    message: `Desole, une erreur est survenu`,
-  });
 }

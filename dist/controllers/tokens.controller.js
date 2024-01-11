@@ -75,7 +75,10 @@ function refresh_token(req, res) {
                     return;
                 }
                 else if (yield (0, tokens_service_1.verifyRefreshToken)(data._id, token)) {
-                    const user = (yield (0, users_services_1.verifyUser)(data._id)) ? yield (0, users_services_1.getUserById)(data._id) : null;
+                    var user = null;
+                    if (yield (0, users_services_1.verifyUser)(data._id)) {
+                        user = yield (0, users_services_1.getUserById)(data._id);
+                    }
                     if (user) {
                         const access_token = jsonwebtoken_1.default.sign({
                             "_id": (_a = user._id) !== null && _a !== void 0 ? _a : "",
@@ -94,7 +97,7 @@ function refresh_token(req, res) {
                             expiresIn: "90 days",
                         });
                         if (yield (0, tokens_service_1.addRefreshToken)(user._id.toString(), refresh_token)) {
-                            res.status(200)
+                            res
                                 .cookie('access_token', access_token, {
                                 httpOnly: true,
                                 maxAge: 1000 * 60 * 15, // 15 minutes
@@ -104,18 +107,33 @@ function refresh_token(req, res) {
                                 httpOnly: true,
                                 maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
                             })
-                                .json({
+                                .status(200).json({
                                 message: "Token rafraichit",
+                            });
+                            return;
+                        }
+                        else {
+                            res.status(403).json({
+                                message: `Desole, une erreur est survenu : refresh token not created`,
                             });
                             return;
                         }
                     }
                 }
+                else {
+                    res.status(403).json({
+                        message: `Desole, une erreur est survenu : refresh token not valid`,
+                    });
+                    return;
+                }
             }));
         }
-        res.status(403).json({
-            message: `Desole, une erreur est survenu`,
-        });
+        else {
+            res.status(403).json({
+                message: `Desole, une erreur est survenu : refresh token not found`,
+            });
+            return;
+        }
     });
 }
 exports.refresh_token = refresh_token;

@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { db } from "../database/instance";
 
 export async function getUserById(user_id: string){
-  const user = await db.collection('user').findOne({_id: new ObjectId(user_id)});
+  const user = await db.collection('users').findOne({_id: new ObjectId(user_id)});
   return user
 }
 

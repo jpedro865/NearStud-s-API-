@@ -24,13 +24,12 @@ app.use(cors({
 app.use(express.json());
 
 // refresh token
-app.post('/refresh', refresh_token)
-
+app.post('/refresh', refresh_token);
 
 // routers here
 app.use('/users', UserRouter);
-app.use('/restos', restoRouter)
-app.use('/favoris', favorisRouter)
+app.use('/restos', restoRouter);
+app.use('/favoris', favorisRouter);
 
 app.get('/', ( req: Request, res: Response) => {
   res.status(200).json({
