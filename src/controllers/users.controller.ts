@@ -195,6 +195,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
 export function logout(req: Request, res: Response) {
   res
     .clearCookie('access_token')
+    .clearCookie('refresh_token')
     .status(200)
     .json({
       "message": "Déconnecté avec succés",

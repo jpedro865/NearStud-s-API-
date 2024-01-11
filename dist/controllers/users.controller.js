@@ -216,6 +216,7 @@ exports.connect_user = connect_user;
 function logout(req, res) {
     res
         .clearCookie('access_token')
+        .clearCookie('refresh_token')
         .status(200)
         .json({
         "message": "Déconnecté avec succés",
