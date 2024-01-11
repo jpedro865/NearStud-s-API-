@@ -10,6 +10,7 @@ const users_route_1 = __importDefault(require("./routes/users.route"));
 const resto_route_1 = __importDefault(require("./routes/resto.route"));
 const environment_1 = __importDefault(require("./utils/environment"));
 const favoris_route_1 = __importDefault(require("./routes/favoris.route"));
+const tokens_controller_1 = require("./controllers/tokens.controller");
 // init app/middleware
 const port = environment_1.default.SERVER_PORT;
 const app = (0, express_1.default)();
@@ -23,7 +24,7 @@ app.use((0, cors_1.default)({
 // teeling express to use json
 app.use(express_1.default.json());
 // refresh token
-app.post('/refresh');
+app.post('/refresh', tokens_controller_1.refresh_token);
 // routers here
 app.use('/users', users_route_1.default);
 app.use('/restos', resto_route_1.default);

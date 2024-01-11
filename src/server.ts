@@ -5,6 +5,7 @@ import UserRouter from './routes/users.route';
 import restoRouter from './routes/resto.route';
 import env_vars from './utils/environment';
 import favorisRouter from './routes/favoris.route';
+import { refresh_token } from './controllers/tokens.controller';
 
 // init app/middleware
 const port = env_vars.SERVER_PORT;
@@ -23,7 +24,7 @@ app.use(cors({
 app.use(express.json());
 
 // refresh token
-app.post('/refresh', )
+app.post('/refresh', refresh_token)
 
 
 // routers here
