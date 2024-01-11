@@ -21,7 +21,6 @@ const env_vars = {
     CLIENT_PORT: process.env.CLIENT_PORT || 3000,
     NODE_ENV: process.env.NODE_ENV || 'dev',
     BASE_URL: getBaseUrl(),
-    SECRET_KEY: process.env.SECRET_KEy || 'secret',
     KEY_TOKEN: process.env.KEY_TOKEN || 'token',
     KEY_TOKEN_REFRESH: process.env.KEY_TOKEN_REFRESH || 'token_refresh',
     EMAIL: process.env.EMAIL || 'nearstuds@zohomail.eu',

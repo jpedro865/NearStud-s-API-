@@ -157,13 +157,13 @@ function connect_user(req, res) {
                         "username": (_e = user.username) !== null && _e !== void 0 ? _e : "",
                         "age": (_f = user.age) !== null && _f !== void 0 ? _f : 0,
                         "admin": (_g = user.admin) !== null && _g !== void 0 ? _g : 0,
-                    }, environment_1.default.SECRET_KEY, {
-                        expiresIn: "24h",
+                    }, environment_1.default.KEY_TOKEN, {
+                        expiresIn: 60 * 15, // 15 minutes
                     });
                     const refresh_token = jsonwebtoken_1.default.sign({
                         "_id": user._id,
                     }, environment_1.default.KEY_TOKEN_REFRESH, {
-                        expiresIn: "90 days",
+                        expiresIn: 3600 * 24 * 90, // 90 days
                     });
                     if ((0, tokens_service_1.addRefreshToken)(user._id.toString(), refresh_token)) {
                         res

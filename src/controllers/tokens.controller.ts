@@ -73,28 +73,24 @@ export async function refresh_token(req: Request, res: Response) {
             user = await getUserById(data._id);
           }
           if (user) {
-            const access_token = jsonwebtoken.sign(
-              {
-                "_id": user._id ?? "",
-                "email": user.email ?? "",
-                "firstname": user.firstname ?? "",
-                "lastname": user.lastname ?? "",
-                "username": user.username ?? "",
-                "age": user.age ?? 0,
-                "admin": user.admin ?? 0,
-              },
-              env_vars.KEY_TOKEN,
-              {
-                expiresIn: 60*15, // 15 minutes
-              }
-            );
+            const access_token = jsonwebtoken.sign({
+              "_id": user._id ?? "",
+              "email": user.email ?? "",
+              "firstname": user.firstname ?? "",
+              "lastname": user.lastname ?? "",
+              "username": user.username ?? "",
+              "age": user.age ?? 0,
+              "admin": user.admin ?? 0,
+            }, env_vars.KEY_TOKEN, {
+              expiresIn: 60*15, // 15 minutes
+            });
             const refresh_token = jsonwebtoken.sign(
               {
                 "_id": user._id,
               },
               env_vars.KEY_TOKEN_REFRESH,
               {
-                expiresIn: "90 days",
+                expiresIn: 3600*24*90, // 90 days
               }
             );
 

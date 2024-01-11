@@ -135,8 +135,8 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
           "username": user.username ?? "",
           "age": user.age ?? 0,
           "admin": user.admin ?? 0,
-        }, env_vars.SECRET_KEY, {
-          expiresIn: "24h",
+        }, env_vars.KEY_TOKEN, {
+          expiresIn: 60*15, // 15 minutes
         });
         const refresh_token = jsonwebtoken.sign(
           {
@@ -144,7 +144,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
           },
           env_vars.KEY_TOKEN_REFRESH,
           {
-            expiresIn: "90 days",
+            expiresIn: 3600*24*90, // 90 days
           }
         );
         if (addRefreshToken(user._id.toString(), refresh_token)) {

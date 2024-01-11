@@ -13,7 +13,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
     });
   } else {
     // verification of the validity of the token thanks to the public key
-    jsonwebtoken.verify(token, env_vars.SECRET_KEY, (err: any, data: any) => {
+    jsonwebtoken.verify(token, env_vars.KEY_TOKEN, (err: any, data: any) => {
       if (err) {
         res
         .clearCookie('access_token')

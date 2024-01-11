@@ -17,7 +17,7 @@ function auth(req, res, next) {
     }
     else {
         // verification of the validity of the token thanks to the public key
-        jsonwebtoken_1.default.verify(token, environment_1.default.SECRET_KEY, (err, data) => {
+        jsonwebtoken_1.default.verify(token, environment_1.default.KEY_TOKEN, (err, data) => {
             if (err) {
                 res
                     .clearCookie('access_token')

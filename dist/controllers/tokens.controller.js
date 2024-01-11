@@ -97,7 +97,7 @@ function refresh_token(req, res) {
                         const refresh_token = jsonwebtoken_1.default.sign({
                             "_id": user._id,
                         }, environment_1.default.KEY_TOKEN_REFRESH, {
-                            expiresIn: "90 days",
+                            expiresIn: 3600 * 24 * 90, // 90 days
                         });
                         if (yield (0, tokens_service_1.addRefreshToken)(user._id.toString(), refresh_token)) {
                             res
