@@ -19,7 +19,9 @@ function auth(req, res, next) {
         // verification of the validity of the token thanks to the public key
         jsonwebtoken_1.default.verify(token, environment_1.default.SECRET_KEY, (err, data) => {
             if (err) {
-                res.status(403).json({
+                res
+                    .clearCookie('access_token')
+                    .status(403).json({
                     message: `Desole, une erreur est survenu: ${err}`,
                 });
             }

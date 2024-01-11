@@ -15,7 +15,9 @@ export function auth(req: Request, res: Response, next: NextFunction) {
     // verification of the validity of the token thanks to the public key
     jsonwebtoken.verify(token, env_vars.SECRET_KEY, (err: any, data: any) => {
       if (err) {
-        res.status(403).json({
+        res
+        .clearCookie('access_token')
+        .status(403).json({
           message: `Desole, une erreur est survenu: ${err}`,
         });
       } else {
