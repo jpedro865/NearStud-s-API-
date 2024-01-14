@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFields = exports.addFields = exports.updateUser = exports.deleteUser = exports.resendEmail = exports.logout = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
+exports.deleteFields = exports.addFields = exports.updateUser = exports.deleteUser = exports.resendEmail = exports.logout = exports.verifyPwd = exports.connect_user = exports.createUser = exports.getById = exports.getAll = void 0;
 const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_validator_1 = require("../validator/users.validator");
@@ -21,6 +21,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Mailer_1 = require("../services/Mailer");
 const environment_1 = __importDefault(require("../utils/environment"));
 const tokens_service_1 = require("../services/tokens.service");
+const users_services_1 = require("../services/users.services");
 /**
  * Controller pour rechercher tous les utilisateurs
  *
@@ -207,6 +208,34 @@ function connect_user(req, res) {
     });
 }
 exports.connect_user = connect_user;
+/**
+ * verifyPwd
+ *
+ * Verifies if the password of the user is correct
+ *
+ * @param req
+ * @param res
+ */
+function verifyPwd(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var user_id = req.params.user_id;
+        var user = yield (0, users_services_1.getUserById)(user_id);
+        console.log(user);
+        if (user) {
+            var pwd = req.body.pwd;
+            if (yield compare_hash(pwd, user.pwd)) {
+                res.status(200).json({
+                    message: "Mot-de-passe Okay"
+                });
+                return;
+            }
+        }
+        res.status(401).json({
+            message: "Mauvais mot-de-passe"
+        });
+    });
+}
+exports.verifyPwd = verifyPwd;
 /**
  * logout
  *
@@ -395,6 +424,15 @@ function compare_hash(pwd, hash) {
         return result;
     });
 }
+/**
+ * UpdateDataParse
+ *
+ * parses request data into a json object taken
+ * by mongo db to update an user document
+ *
+ * @param req Request
+ * @returns json data
+ */
 function UpdateDataParse(req) {
     return __awaiter(this, void 0, void 0, function* () {
         let data = '{"$set": {';
@@ -404,6 +442,7 @@ function UpdateDataParse(req) {
         req.body.email ? data += '"email": "' + req.body.email + '",' : data += '';
         req.body.pwd ? data += '"pwd":"' + (yield crypt_pwd(req.body.pwd)) + '",' : data += '';
         req.body.admin ? data += '"admin": ' + req.body.admin + ',' : data += '';
+        req.body.age ? data += '"age": ' + req.body.admin + ',' : data += '';
         data += '}}';
         data = data.replace(',}}', '}}');
         const jsonData = JSON.parse(data);

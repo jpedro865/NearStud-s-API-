@@ -17,5 +17,6 @@ UserRouter.delete('/:id', authentificator_1.auth, permissions_1.hasRigths, users
 UserRouter.patch('/:id', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.updateUser);
 UserRouter.post('/add-fields', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.addFields);
 UserRouter.post('/delete-fields', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.deleteFields);
+UserRouter.post('/verify-pwd/:user_id', authentificator_1.auth, users_controller_1.verifyPwd);
 exports.default = UserRouter;
 //# sourceMappingURL=users.route.js.map

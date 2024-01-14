@@ -7,6 +7,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import { Mailer } from '../services/Mailer';
 import env_vars from '../utils/environment';
 import { addRefreshToken } from '../services/tokens.service';
+import { getUserById } from '../services/users.services';
 
 /**
  * Controller pour rechercher tous les utilisateurs
@@ -184,6 +185,34 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
     });
     return;
   }
+}
+
+/**
+ * verifyPwd
+ * 
+ * Verifies if the password of the user is correct
+ * 
+ * @param req 
+ * @param res 
+ */
+export async function verifyPwd(req: Request, res: Response) {
+  var user_id: string = req.params.user_id;
+
+  var user = await getUserById(user_id);
+  console.log(user);
+  if (user) {
+    var pwd: string = req.body.pwd;
+
+    if (await compare_hash(pwd, user.pwd)) {
+      res.status(200).json({
+        message: "Mot-de-passe Okay"
+      })
+      return;
+    }
+  }
+  res.status(401).json({
+    message: "Mauvais mot-de-passe"
+  })
 }
 
 /**
@@ -374,6 +403,15 @@ async function compare_hash(pwd: string, hash: string) {
   return result
 }
 
+/**
+ * UpdateDataParse
+ * 
+ * parses request data into a json object taken
+ * by mongo db to update an user document
+ * 
+ * @param req Request
+ * @returns json data
+ */
 async function UpdateDataParse(req: Request) {
   let data = '{"$set": {';
   req.body.firstname? data += '"firstname": "' + req.body.firstname + '",': data+= '';
@@ -382,6 +420,7 @@ async function UpdateDataParse(req: Request) {
   req.body.email? data += '"email": "' + req.body.email + '",': data+= '';
   req.body.pwd? data += '"pwd":"' + await crypt_pwd(req.body.pwd) + '",': data+= '';
   req.body.admin? data += '"admin": ' + req.body.admin + ',': data+= '';
+  req.body.age? data += '"age": ' + req.body.admin + ',' : data += '';
   data += '}}';
   data = data.replace(',}}', '}}');
   const jsonData = JSON.parse(data);
