@@ -420,7 +420,7 @@ async function UpdateDataParse(req: Request) {
   req.body.email? data += '"email": "' + req.body.email + '",': data+= '';
   req.body.pwd? data += '"pwd":"' + await crypt_pwd(req.body.pwd) + '",': data+= '';
   req.body.admin? data += '"admin": ' + req.body.admin + ',': data+= '';
-  req.body.age? data += '"age": ' + req.body.admin + ',' : data += '';
+  req.body.age? data += '"age": ' + req.body.age + ',' : data += '';
   data += '}}';
   data = data.replace(',}}', '}}');
   const jsonData = JSON.parse(data);
