@@ -10,7 +10,7 @@ import { hasRigths } from '../middleware/permissions';
 
 const UserRouter: Router = Router();
 
-UserRouter.get('/users/check-token', auth, (req: Request, res: Response) => {
+UserRouter.get('/check-token', auth, (req: Request, res: Response) => {
   res.status(200).json({
     message: 'Le token est valide',
   });
