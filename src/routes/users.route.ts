@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import {
   addFields, connect_user, createUser,
   deleteFields, deleteUser, getAll, getById,
@@ -10,6 +10,11 @@ import { hasRigths } from '../middleware/permissions';
 
 const UserRouter: Router = Router();
 
+UserRouter.get('/users/check-token', auth, (req: Request, res: Response) => {
+  res.status(200).json({
+    message: 'Le token est valide',
+  });
+});
 UserRouter.get('/verif-email/:token', valid_email_token);
 UserRouter.get('/', auth, getAll);
 UserRouter.get('/:id', auth, hasRigths, getById);

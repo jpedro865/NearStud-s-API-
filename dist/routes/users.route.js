@@ -6,6 +6,11 @@ const authentificator_1 = require("../middleware/authentificator");
 const tokens_controller_1 = require("../controllers/tokens.controller");
 const permissions_1 = require("../middleware/permissions");
 const UserRouter = (0, express_1.Router)();
+UserRouter.get('/users/check-token', authentificator_1.auth, (req, res) => {
+    res.status(200).json({
+        message: 'Le token est valide',
+    });
+});
 UserRouter.get('/verif-email/:token', tokens_controller_1.valid_email_token);
 UserRouter.get('/', authentificator_1.auth, users_controller_1.getAll);
 UserRouter.get('/:id', authentificator_1.auth, permissions_1.hasRigths, users_controller_1.getById);
