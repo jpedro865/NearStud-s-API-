@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { db } from '../database/instance';
 import { RestoValidator } from '../validator/resto.validator';
+import { Coord } from '../interfaces/resto.interface';
 
 /**
  * createResto
@@ -97,6 +98,42 @@ export async function getRestosFavoris(req: Request, res: Response) {
     .catch(e => {
       res.status(500).json({
         "message": e
+      });
+    });
+}
+
+/**
+ * getRestosZone
+ * 
+ * renvoi les 20 restaurants le mieux note autour de la position
+ * 
+ * @param req 
+ * @param res 
+ */
+export async function getRestosZone(req: Request, res: Response) {
+  var cornerBL: Coord = req.body.cornerBL as Coord;
+  var cornerTR: Coord = req.body.cornerTR as Coord;
+
+
+  if (!cornerBL || !cornerTR) {
+    res.status(400).json({
+      "message": "Les coordonnees sont obligatoires"
+    });
+    return;
+  }
+  await db.collection('restaurants')
+    .find({
+      "coord.lat": {$gt: cornerBL.lat, $lt: cornerTR.lat},
+      "coord.lng": {$gt: cornerBL.lng, $lt: cornerTR.lng}
+    })
+
+    .toArray()
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => {
+      res.status(500).json({
+        "message": e.message
       });
     });
 }

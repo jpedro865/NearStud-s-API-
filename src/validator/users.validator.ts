@@ -27,6 +27,7 @@ export class UserValidator extends Validator {
     this.userIsAdult(user.age);
 
     if(this.isValid()) {
+      this.isNumber(user.age);
       await this.checkUserNameExists(user.username);
       await this.checkEmailExists(user.email);
     }

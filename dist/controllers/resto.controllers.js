@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRestosFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
+exports.getRestosZone = exports.getRestosFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
 const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 const resto_validator_1 = require("../validator/resto.validator");
@@ -116,4 +116,39 @@ function getRestosFavoris(req, res) {
     });
 }
 exports.getRestosFavoris = getRestosFavoris;
+/**
+ * getRestosZone
+ *
+ * renvoi les 20 restaurants le mieux note autour de la position
+ *
+ * @param req
+ * @param res
+ */
+function getRestosZone(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var cornerBL = req.body.cornerBL;
+        var cornerTR = req.body.cornerTR;
+        if (!cornerBL || !cornerTR) {
+            res.status(400).json({
+                "message": "Les coordonnees sont obligatoires"
+            });
+            return;
+        }
+        yield instance_1.db.collection('restaurants')
+            .find({
+            "coord.lat": { $gt: cornerBL.lat, $lt: cornerTR.lat },
+            "coord.lng": { $gt: cornerBL.lng, $lt: cornerTR.lng }
+        })
+            .toArray()
+            .then(data => {
+            res.status(200).json(data);
+        })
+            .catch(e => {
+            res.status(500).json({
+                "message": e.message
+            });
+        });
+    });
+}
+exports.getRestosZone = getRestosZone;
 //# sourceMappingURL=resto.controllers.js.map

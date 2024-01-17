@@ -28,7 +28,7 @@ export class RestoValidator extends Validator {
       this.isString(resto.adresse.pays);
       this.isNumber(resto.coord.lat);
       this.isNumber(resto.coord.lng);
-      this.isArrayOfString(resto.cuisine);
+      this.isString(resto.cuisine);
     }
   }
 }

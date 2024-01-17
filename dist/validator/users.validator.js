@@ -34,6 +34,7 @@ class UserValidator extends validator_1.Validator {
             this.isEmpty(user.age, 'Age non renseigné');
             this.userIsAdult(user.age);
             if (this.isValid()) {
+                this.isNumber(user.age);
                 yield this.checkUserNameExists(user.username);
                 yield this.checkEmailExists(user.email);
             }

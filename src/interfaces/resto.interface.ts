@@ -13,7 +13,7 @@ interface Adresse {
   pays: string
 }
 
-interface Coord {
+export interface Coord {
   lat: number, // latitude
   lng: number // longitude
 }
