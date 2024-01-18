@@ -98,7 +98,7 @@ export async function refresh_token(req: Request, res: Response) {
               res
                 .cookie('access_token', access_token, {
                   httpOnly: true,
-                  maxAge: 1000 * 36000, // 1 heure
+                  maxAge: 1000 * 3600, // 1 heure
                 })
                 .cookie('refresh_token', refresh_token, {
                   path: '/refresh',
