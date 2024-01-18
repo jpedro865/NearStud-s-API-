@@ -174,3 +174,58 @@ export async function searchResto(req: Request, res: Response) {
       });
     });
 }
+
+/**
+ * bestRestos
+ * 
+ * renvoi les 10 meilleurs restaurants
+ * 
+ * @param req 
+ * @param res 
+ */
+export async function bestRestos(req: Request, res: Response) {
+  await db.collection('restaurants')
+    .find()
+    .sort({note: -1})
+    .limit(10)
+    .toArray()
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => {
+      res.status(500).json({
+        "message": e.message
+      });
+    });
+}
+
+/**
+ * getRandom
+ * 
+ * renvoi 10 restaurants au hasard
+ * 
+ * @param req 
+ * @param res 
+ */
+export async function getRandomRestos(req: Request, res: Response) {
+  await db.collection('restaurants')
+    .aggregate([
+      {
+        $sample: {
+          size: 10
+        }
+      }
+    ])
+    .limit(10)
+    .toArray()
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => {
+      res.status(500).json({
+        "message": e.message
+      });
+    });
+}
+
+

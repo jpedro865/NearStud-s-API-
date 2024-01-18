@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchResto = exports.getRestosZone = exports.getRestosFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
+exports.getRandomRestos = exports.bestRestos = exports.searchResto = exports.getRestosZone = exports.getRestosFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
 const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 const resto_validator_1 = require("../validator/resto.validator");
@@ -189,4 +189,61 @@ function searchResto(req, res) {
     });
 }
 exports.searchResto = searchResto;
+/**
+ * bestRestos
+ *
+ * renvoi les 10 meilleurs restaurants
+ *
+ * @param req
+ * @param res
+ */
+function bestRestos(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield instance_1.db.collection('restaurants')
+            .find()
+            .sort({ note: -1 })
+            .limit(10)
+            .toArray()
+            .then(data => {
+            res.status(200).json(data);
+        })
+            .catch(e => {
+            res.status(500).json({
+                "message": e.message
+            });
+        });
+    });
+}
+exports.bestRestos = bestRestos;
+/**
+ * getRandom
+ *
+ * renvoi 10 restaurants au hasard
+ *
+ * @param req
+ * @param res
+ */
+function getRandomRestos(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield instance_1.db.collection('restaurants')
+            .aggregate([
+            {
+                $sample: {
+                    size: 10
+                }
+            }
+        ])
+            .limit(10)
+            .toArray()
+            .then(data => {
+            res.status(200).json(data);
+        })
+            .catch(e => {
+            res.status(500).json({
+                "message": e.message
+            });
+        });
+    });
+}
+exports.getRandomRestos = getRandomRestos;
 //# sourceMappingURL=resto.controllers.js.map
