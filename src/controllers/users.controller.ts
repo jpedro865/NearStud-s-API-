@@ -152,7 +152,7 @@ export async function connect_user(req: Request, res: Response): Promise<void> {
           res
           .cookie('access_token', token, {
             httpOnly: true,
-            maxAge: 1000 * 60 * 15, // 15 minutes
+            maxAge: 1000 * 3600, // 1 heure
           })
           .cookie('refresh_token', refresh_token, {
             path: '/refresh',

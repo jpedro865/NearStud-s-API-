@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRestosZone = exports.getRestosFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
+exports.searchResto = exports.getRestosZone = exports.getRestosFavoris = exports.getAllResto = exports.getRestoById = exports.createResto = void 0;
 const mongodb_1 = require("mongodb");
 const instance_1 = require("../database/instance");
 const resto_validator_1 = require("../validator/resto.validator");
@@ -151,4 +151,42 @@ function getRestosZone(req, res) {
     });
 }
 exports.getRestosZone = getRestosZone;
+/**
+ * searchResto
+ *
+ * recherche un restaurant par son nom ou sa cuisine
+ *
+ * @param req
+ * @param res
+ */
+function searchResto(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const search = req.body.search;
+        yield instance_1.db.collection('restaurants')
+            .find({
+            $or: [
+                {
+                    nom: {
+                        $regex: search, $options: 'i'
+                    }
+                },
+                {
+                    cuisine: {
+                        $regex: search, $options: 'i'
+                    }
+                }
+            ]
+        })
+            .toArray()
+            .then(data => {
+            res.status(200).json(data);
+        })
+            .catch(e => {
+            res.status(500).json({
+                "message": e.message
+            });
+        });
+    });
+}
+exports.searchResto = searchResto;
 //# sourceMappingURL=resto.controllers.js.map

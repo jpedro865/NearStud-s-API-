@@ -82,7 +82,7 @@ export async function refresh_token(req: Request, res: Response) {
               "age": user.age ?? 0,
               "admin": user.admin ?? 0,
             }, env_vars.KEY_TOKEN, {
-              expiresIn: 60*15, // 15 minutes
+              expiresIn: 3600, // 1 heure
             });
             const refresh_token = jsonwebtoken.sign(
               {
@@ -98,12 +98,12 @@ export async function refresh_token(req: Request, res: Response) {
               res
                 .cookie('access_token', access_token, {
                   httpOnly: true,
-                  maxAge: 1000 * 60 * 15, // 15 minutes
+                  maxAge: 1000 * 36000, // 1 heure
                 })
                 .cookie('refresh_token', refresh_token, {
                   path: '/refresh',
                   httpOnly: true,
-                  maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
+                  maxAge: 1000 * 3600 * 24 * 90, // 90 days
                 })
                 .status(200).json({
                 message: "Token rafraichit",

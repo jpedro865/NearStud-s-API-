@@ -137,3 +137,40 @@ export async function getRestosZone(req: Request, res: Response) {
       });
     });
 }
+
+/**
+ * searchResto
+ * 
+ * recherche un restaurant par son nom ou sa cuisine
+ * 
+ * @param req 
+ * @param res 
+ */
+export async function searchResto(req: Request, res: Response) {
+  const search: string = req.body.search as string;
+
+  await db.collection('restaurants')
+    .find({
+      $or: [
+        {
+          nom: {
+            $regex: search, $options:'i'
+          }
+        },
+        {
+          cuisine: {
+            $regex: search, $options:'i'
+          }
+        }
+      ]
+    })
+    .toArray()
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => {
+      res.status(500).json({
+        "message": e.message
+      });
+    });
+}

@@ -92,7 +92,7 @@ function refresh_token(req, res) {
                             "age": (_f = user.age) !== null && _f !== void 0 ? _f : 0,
                             "admin": (_g = user.admin) !== null && _g !== void 0 ? _g : 0,
                         }, environment_1.default.KEY_TOKEN, {
-                            expiresIn: 60 * 15, // 15 minutes
+                            expiresIn: 3600, // 1 heure
                         });
                         const refresh_token = jsonwebtoken_1.default.sign({
                             "_id": user._id,
@@ -103,12 +103,12 @@ function refresh_token(req, res) {
                             res
                                 .cookie('access_token', access_token, {
                                 httpOnly: true,
-                                maxAge: 1000 * 60 * 15, // 15 minutes
+                                maxAge: 1000 * 36000, // 1 heure
                             })
                                 .cookie('refresh_token', refresh_token, {
                                 path: '/refresh',
                                 httpOnly: true,
-                                maxAge: 1000 * 60 * 60 * 24 * 90, // 90 days
+                                maxAge: 1000 * 3600 * 24 * 90, // 90 days
                             })
                                 .status(200).json({
                                 message: "Token rafraichit",
